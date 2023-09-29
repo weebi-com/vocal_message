@@ -4,9 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class RecorderDesktopFrame extends StatefulWidget {
-  final String azureFolderFullPath;
-  const RecorderDesktopFrame({required this.azureFolderFullPath, Key? key})
-      : super(key: key);
+  const RecorderDesktopFrame({Key? key}) : super(key: key);
 
   @override
   State<RecorderDesktopFrame> createState() => _RecorderDesktopFrameState();
@@ -39,7 +37,6 @@ class _RecorderDesktopFrameState extends State<RecorderDesktopFrame> {
       child: showPlayer
           ? AudioRecPlayer(
               source: audioPath!,
-              azureFolderFullPath: widget.azureFolderFullPath,
               onDoneOrDelete: () {
                 setState(() => showPlayer = false);
               },

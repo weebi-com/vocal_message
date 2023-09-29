@@ -27,15 +27,12 @@ abstract class AzureBlobAbstract {
       String wavFileLink, http.Client client) async {
     final storage = AzureStorage.parse(_connectionString);
     try {
-      print('wavFileLink $wavFileLink');
       final streamedResponse = await storage.getBlob(wavFileLink, client);
-      print('streamedResponse.contentLength ${streamedResponse.contentLength}');
-      // Uint8List data = await file.stream.toBytes();
-      // final response = await http.Response.fromStream(file);
-
       return await streamedResponse.stream.toBytes();
     } on AzureStorageException catch (ex) {
       debugPrint('AzureStorageException ${ex.message}');
+      return Uint8List.fromList([]);
+    } on http.ClientException catch (e) {
       return Uint8List.fromList([]);
     }
   }
@@ -44,7 +41,7 @@ abstract class AzureBlobAbstract {
       String text, String azureFolderFullPath, http.Client client) async {
     final storage = AzureStorage.parse(_connectionString);
     try {
-      await storage.putBlob(azureFolderFullPath,
+      await storage.putBlob(azureFolderFullPath, client,
           body: text, contentType: 'application/json');
       debugPrint('uploadJsonToAzure done');
       return true;
@@ -55,18 +52,21 @@ abstract class AzureBlobAbstract {
   }
 
   static Future<bool> uploadAudioWavToAzure(
-    String filePath,
-    String azureFolderFullPath,
-  ) async {
+      String filePath, String azureFolderFullPath, http.Client client) async {
     try {
       Uint8List content = await File(filePath).readAsBytes();
       final storage = AzureStorage.parse(_connectionString);
-      await storage.putBlob(azureFolderFullPath,
+      final isDone = await storage.putBlob(azureFolderFullPath, client,
           bodyBytes: content, contentType: 'audio/wav');
-      debugPrint('uploadAudioWavToAzure done');
-      return true;
+      return isDone;
     } on AzureStorageException catch (ex) {
       debugPrint('AzureStorageException ${ex.message}');
+      return false;
+    } on http.ClientException catch (e) {
+      if (e.message.contains('Connection closed while receiving data') ==
+          false) {
+        debugPrint(e.toString());
+      }
       return false;
     }
   }

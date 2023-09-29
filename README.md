@@ -5,13 +5,15 @@
 - I do not understand the use of just_audio + audioplayers
   - it would be nice to stick to audioplayers for a lighter lib
 - yet the goal is to go azure sync as fast as possible, so bear with all tech debt and grin
+                      // niceToHave handle progress syncing
 
 # Documentation
 azureFolderFullPath = container + folderPath + direction
 ex : /audio-test/jimmy_jo/uploads // where app-user's vocal message will be saved
 ex : /audio-test/jimmy_jo/downloads // where admin should save vocal message replies
 
-
+azure permissions
+make sure to set a role with blob contributor
 
 # Dependencies
 

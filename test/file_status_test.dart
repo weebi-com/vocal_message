@@ -1,12 +1,12 @@
-// TODO - test that fileStatus present locally and in Azure is displayed just right
-
 import 'package:vocal_message/src/azure_blob/azblob_abstract.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   test('fileStatus', () async {
-    final files =
-        await AzureBlobAbstract.fetchRemoteAudioFilesInfo('/audio-test/test');
+    final client = http.Client();
+    final files = await AzureBlobAbstract.fetchRemoteAudioFilesInfo(
+        '/audio-test/test', client);
     files.first.path;
   });
 }

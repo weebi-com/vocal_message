@@ -3,7 +3,8 @@ import 'package:vocal_message/src/globals.dart';
 enum SyncStatus {
   remoteNotSynced,
   localNotSynced,
-  syncing,
+  remoteSyncing,
+  localSyncing,
   synced,
 }
 

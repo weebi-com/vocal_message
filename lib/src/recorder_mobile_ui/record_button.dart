@@ -12,14 +12,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:record/record.dart';
+import 'package:http/http.dart' as http;
 
+//TODO : make upload cancelable
 class RecorderMobileView extends StatefulWidget {
   final AnimationController controller;
-  final String azureFolderFullPath;
   const RecorderMobileView({
-    Key? key,
     required this.controller,
-    required this.azureFolderFullPath,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -385,22 +385,28 @@ class _RecorderMobileViewState extends State<RecorderMobileView> {
                   Vibrate.feedback(FeedbackType.success);
                 }
                 final filePath = await _stop();
-                final dd = await AzureBlobAbstract.uploadAudioWavToAzure(
-                    filePath!,
-                    widget.azureFolderFullPath +
-                        '/' +
-                        filePath.split(Platform.pathSeparator).last);
-                // niceToHave handle progress syncing
-                if (!dd) {
-                  // mark this file as not sent
-                  AudioState.allAudioFiles.myFiles
-                      .add(MyFileStatus(SyncStatus.synced, filePath));
-                } else {
-                  AudioState.allAudioFiles.myFiles
-                      .add(MyFileStatus(SyncStatus.localNotSynced, filePath));
+                if (filePath == null) {
+                  return;
                 }
+                Globals.client = http.Client();
+                AudioState.allAudioFiles.myFiles
+                    .add(MyFileStatus(SyncStatus.localSyncing, filePath));
                 Globals.audioListKey.currentState!
                     .insertItem(AudioState.allAudioFiles.all.length - 1);
+                final dd = await AzureBlobAbstract.uploadAudioWavToAzure(
+                    filePath,
+                    Globals.azureMyFilesPath + '/' + filePath.nameOnly,
+                    Globals.client);
+                if (dd == true) {
+                  Globals.client.close();
+                  final index = AudioState.allAudioFiles.myFiles.indexWhere(
+                      (e) =>
+                          e.uploadStatus == SyncStatus.localSyncing &&
+                          e.filePath == filePath);
+                  AudioState.allAudioFiles.myFiles[index] =
+                      MyFileStatus(SyncStatus.synced, filePath);
+                  Globals.audioListKey.currentState!.setState(() {});
+                }
                 debugPrint(filePath);
               },
             ),
@@ -501,24 +507,28 @@ class _RecorderMobileViewState extends State<RecorderMobileView> {
           if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
             Vibrate.feedback(FeedbackType.success);
           }
-
           final filePath = await _stop();
-          final dd = await AzureBlobAbstract.uploadAudioWavToAzure(
-              filePath!,
-              widget.azureFolderFullPath +
-                  '/' +
-                  filePath.split(Platform.pathSeparator).last);
-          // niceToHave handle progress syncing
-          if (!dd) {
-            // mark this file as not sent
-            AudioState.allAudioFiles.myFiles
-                .add(MyFileStatus(SyncStatus.synced, filePath));
-          } else {
-            AudioState.allAudioFiles.myFiles
-                .add(MyFileStatus(SyncStatus.localNotSynced, filePath));
+          if (filePath == null) {
+            return;
           }
+          Globals.client = http.Client();
+          AudioState.allAudioFiles.myFiles
+              .add(MyFileStatus(SyncStatus.localSyncing, filePath));
           Globals.audioListKey.currentState!
               .insertItem(AudioState.allAudioFiles.all.length - 1);
+          final dd = await AzureBlobAbstract.uploadAudioWavToAzure(
+              filePath,
+              Globals.azureMyFilesPath + '/' + filePath.nameOnly,
+              Globals.client);
+          if (dd == true) {
+            Globals.client.close();
+            final index = AudioState.allAudioFiles.myFiles.indexWhere((e) =>
+                e.uploadStatus == SyncStatus.localSyncing &&
+                e.filePath == filePath);
+            AudioState.allAudioFiles.myFiles[index] =
+                MyFileStatus(SyncStatus.synced, filePath);
+            Globals.audioListKey.currentState!.setState(() {});
+          }
           debugPrint(filePath);
         }
       },

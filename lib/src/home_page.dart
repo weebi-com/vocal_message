@@ -114,13 +114,8 @@ class _HomePageState extends State<HomePage>
             Padding(
               padding: const EdgeInsets.all(22.0),
               child: (!kIsWeb && (Platform.isAndroid || Platform.isIOS))
-                  ? RecorderMobileView(
-                      controller: controller,
-                      azureFolderFullPath: '/audio-test/jimmy_jo/uploads',
-                    )
-                  : const RecorderDesktopFrame(
-                      azureFolderFullPath: '/audio-test/jimmy_jo/uploads',
-                    ),
+                  ? RecorderMobileView(controller: controller)
+                  : const RecorderDesktopFrame(),
             ),
             const SizedBox(height: 12)
           ],

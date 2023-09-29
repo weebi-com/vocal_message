@@ -7,11 +7,12 @@ import 'package:vocal_message/src/globals.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
+//TODO : make upload cancelable
 class AudioRecPlayer extends StatefulWidget {
   /// Path from where to play recorded audio
   final String source;
-  final String azureFolderFullPath;
 
   /// Callback when audio file should be removed
   /// Setting this to null hides the delete button
@@ -20,7 +21,6 @@ class AudioRecPlayer extends StatefulWidget {
   const AudioRecPlayer({
     Key? key,
     required this.source,
-    required this.azureFolderFullPath,
     required this.onDoneOrDelete,
   }) : super(key: key);
 
@@ -94,6 +94,7 @@ class AudioRecPlayerState extends State<AudioRecPlayer> {
                         } else {
                           widget.onDoneOrDelete();
                         }
+                        File(widget.source).delete();
                       },
                     ),
                   ),
@@ -108,23 +109,27 @@ class AudioRecPlayerState extends State<AudioRecPlayer> {
                   child: IconButton(
                     icon: const Icon(Icons.upload, color: Colors.white),
                     onPressed: () async {
-                      // send to azure blob
-                      final dd = await AzureBlobAbstract.uploadAudioWavToAzure(
-                          widget.source,
-                          widget.azureFolderFullPath +
-                              '/' +
-                              widget.source.split(Platform.pathSeparator).last);
-                      // niceToHave handle progress syncing
-                      if (!dd) {
-                        // mark this file as not sent
-                        AudioState.allAudioFiles.myFiles.add(
-                            MyFileStatus(SyncStatus.synced, widget.source));
-                      } else {
-                        AudioState.allAudioFiles.myFiles.add(MyFileStatus(
-                            SyncStatus.localNotSynced, widget.source));
-                      }
+                      Globals.client = http.Client();
+                      AudioState.allAudioFiles.myFiles.add(
+                          MyFileStatus(SyncStatus.localSyncing, widget.source));
                       Globals.audioListKey.currentState!
                           .insertItem(AudioState.allAudioFiles.all.length - 1);
+                      final dd = await AzureBlobAbstract.uploadAudioWavToAzure(
+                          widget.source,
+                          Globals.azureMyFilesPath +
+                              '/' +
+                              widget.source.nameOnly,
+                          Globals.client);
+                      if (dd == true) {
+                        Globals.client.close();
+                        final index = AudioState.allAudioFiles.myFiles
+                            .indexWhere((e) =>
+                                e.uploadStatus == SyncStatus.localSyncing &&
+                                e.filePath == widget.source);
+                        AudioState.allAudioFiles.myFiles[index] =
+                            MyFileStatus(SyncStatus.synced, widget.source);
+                        Globals.audioListKey.currentState!.setState(() {});
+                      }
                       debugPrint(widget.source);
                       widget.onDoneOrDelete();
                     },

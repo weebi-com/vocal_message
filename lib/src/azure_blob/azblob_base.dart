@@ -3,6 +3,7 @@ library az_blob;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:http_parser/http_parser.dart';
@@ -132,10 +133,19 @@ class AzureStorage {
     return twoStupidString;
   }
 
-  Stream<T> onDone<T>(Stream<T> stream, void Function() onDone) =>
+  Stream<T> onDone<T>(Stream<T> stream, void Function() onDone,
+          void Function() onConnectionClosed) =>
       stream.transform(StreamTransformer.fromHandlers(handleDone: (sink) {
         sink.close();
         onDone();
+      }, handleError: (error, stackTrace, sink) {
+        if (error is http.ClientException) {
+          if (error.message == 'Connection closed while receiving data') {
+            sink.addError(error);
+            // throw http.ClientException(
+            //     'Connection closed while receiving data');
+          }
+        }
       }));
 
   /// List Blobs. (Raw API)
@@ -159,20 +169,23 @@ class AzureStorage {
   Future<http.StreamedResponse> _sendRequest(
       http.Request request, http.Client client) async {
     // copy paste from http package to use a single that can be closed
+    http.StreamedResponse response =
+        http.StreamedResponse(const http.ByteStream(Stream.empty()), 400);
     try {
-      var response = await client.send(request);
-      var stream = onDone(response.stream, client.close);
-      return http.StreamedResponse(http.ByteStream(stream), response.statusCode,
-          contentLength: response.contentLength,
-          request: response.request,
-          headers: response.headers,
-          isRedirect: response.isRedirect,
-          persistentConnection: response.persistentConnection,
-          reasonPhrase: response.reasonPhrase);
-    } catch (_) {
-      client.close();
-      rethrow;
+      response = await client.send(request);
+    } on http.ClientException catch (e) {
+      if (e.message.contains('Connection closed while') == false) {
+        debugPrint(e.message);
+      }
     }
+    final stream = onDone(response.stream, client.close, () {});
+    return http.StreamedResponse(http.ByteStream(stream), response.statusCode,
+        contentLength: response.contentLength,
+        request: response.request,
+        headers: response.headers,
+        isRedirect: response.isRedirect,
+        persistentConnection: response.persistentConnection,
+        reasonPhrase: response.reasonPhrase);
   }
 
   /// Get Blob.
@@ -226,7 +239,7 @@ class AzureStorage {
   /// Put Blob.
   ///
   /// `body` and `bodyBytes` are exclusive and mandatory.
-  Future<void> putBlob(String path,
+  Future<bool> putBlob(String path, http.Client client,
       {String? body,
       Uint8List? bodyBytes,
       String? contentType,
@@ -250,21 +263,30 @@ class AzureStorage {
       request.body = '';
     }
     sign(request);
-    var res = await request.send();
-    if (res.statusCode == 201) {
-      await res.stream.drain();
-      if (type == BlobType.appendBlob && (body != null || bodyBytes != null)) {
-        await appendBlock(path, body: body, bodyBytes: bodyBytes);
-      }
-      return;
-    }
 
-    var message = await res.stream.bytesToString();
-    throw AzureStorageException(message, res.statusCode, res.headers);
+    try {
+      var res = await client.send(request);
+      if (res.statusCode == 201) {
+        await res.stream.drain();
+        if (type == BlobType.appendBlob &&
+            (body != null || bodyBytes != null)) {
+          await appendBlock(path, body: body, bodyBytes: bodyBytes);
+        }
+        return true;
+      }
+
+      var message = await res.stream.bytesToString();
+      throw AzureStorageException(message, res.statusCode, res.headers);
+    } on http.ClientException catch (e) {
+      if (e.message.contains('Connection closed while') == false) {
+        debugPrint(e.message);
+      }
+      return false;
+    }
   }
 
   /// Append block to blob.
-  Future<void> appendBlock(String path,
+  Future<bool> appendBlock(String path,
       {String? body, Uint8List? bodyBytes}) async {
     var request = http.Request(
         'PUT', uri(path: path, queryParameters: {'comp': 'appendblock'}));
@@ -274,13 +296,19 @@ class AzureStorage {
       request.body = body;
     }
     sign(request);
-    var res = await request.send();
-    if (res.statusCode == 201) {
-      await res.stream.drain();
-      return;
+    try {
+      var res = await request.send();
+      if (res.statusCode == 201) {
+        await res.stream.drain();
+        return true;
+      }
+      var message = await res.stream.bytesToString();
+      throw AzureStorageException(message, res.statusCode, res.headers);
+    } on http.ClientException catch (e) {
+      if (e.message.contains('Connection closed while') == false) {
+        debugPrint(e.message);
+      }
+      return false;
     }
-
-    var message = await res.stream.bytesToString();
-    throw AzureStorageException(message, res.statusCode, res.headers);
   }
 }
