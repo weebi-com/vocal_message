@@ -8,7 +8,10 @@
 
 # Documentation
 azureFolderFullPath = container + folderPath + direction
-ex : /audio-test/jimmy_jo/uploads
+ex : /audio-test/jimmy_jo/uploads // where app-user's vocal message will be saved
+ex : /audio-test/jimmy_jo/downloads // where admin should save vocal message replies
+
+
 
 # Dependencies
 

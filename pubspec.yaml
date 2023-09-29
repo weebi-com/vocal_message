@@ -41,6 +41,8 @@ dependencies:
   lottie: ^1.2.1
   xml: ^6.2.2
   intl: ^0.18.1
+  connectivity_plus: ^4.0.2
+  internet_connection_checker: ^1.0.0+1
 
 dev_dependencies:
   flutter_test:

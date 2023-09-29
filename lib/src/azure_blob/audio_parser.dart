@@ -28,9 +28,11 @@ class AzureAudioFile {
       final contentLength =
           int.parse(properties.findElements('Content-Length').first.text);
       final type = properties.findElements('Content-Type').first.text;
-      if (path.isNotEmpty && type == 'audio/wav') {
-        final fileAzure = AzureAudioFile(path, creationTime, contentLength);
-        filesAzure.add(fileAzure);
+      if (path.isNotEmpty) {
+        if (type == 'audio/wav' || type == 'audio/x-wav') {
+          final fileAzure = AzureAudioFile(path, creationTime, contentLength);
+          filesAzure.add(fileAzure);
+        }
       }
     }
     return filesAzure;

@@ -1,9 +1,15 @@
+import 'dart:async';
+import 'dart:developer';
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:vocal_message/example/const.dart';
 import 'package:vocal_message/src/azure_blob/azblob_abstract.dart';
 import 'package:vocal_message/src/file_status.dart';
 import 'package:vocal_message/src/globals.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:http/http.dart' as http;
 
 class AudioBubble<F extends FileSyncStatus> extends StatelessWidget {
   final F fileSyncStatus;
@@ -11,6 +17,7 @@ class AudioBubble<F extends FileSyncStatus> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(fileSyncStatus);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -52,21 +59,39 @@ class AudioBubbleWidget<F extends FileSyncStatus> extends StatefulWidget {
 class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
   final player = AudioPlayer();
   Duration? duration;
+  late http.Client client;
 
   @override
   void initState() {
     super.initState();
-    player.setFilePath(widget.fileSyncStatus.filePath).then((value) {
-      setState(() {
-        duration = value;
+    if (widget.fileSyncStatus is MyFileStatus) {
+      player.setFilePath(widget.fileSyncStatus.filePath).then((value) {
+        setState(() => duration = value);
       });
-    });
+    } else {
+      //widget.fileSyncStatus is TheirFileStatus
+      if ((widget.fileSyncStatus as TheirFileStatus).localPathFull.isNotEmpty) {
+        final localPathFull =
+            (widget.fileSyncStatus as TheirFileStatus).localPathFull;
+        player.setFilePath(localPathFull).then((value) {
+          setState(() => duration = value);
+        });
+      }
+    }
   }
 
   String prettyDuration(Duration d) {
     var min = d.inMinutes < 10 ? "0${d.inMinutes}" : d.inMinutes.toString();
     var sec = d.inSeconds < 10 ? "0${d.inSeconds}" : d.inSeconds.toString();
     return min + ":" + sec;
+  }
+
+  Future<Uint8List> downloadHandler() async {
+    // here close client if needed
+    client = http.Client();
+    final audio = await AzureBlobAbstract.downloadAudioFromAzure(
+        downloadPath + '/' + widget.fileSyncStatus.filePath, client);
+    return audio;
   }
 
   @override
@@ -79,27 +104,89 @@ class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
           children: [
             if (widget.fileSyncStatus.status == SyncStatus.remoteNotSynced)
               IconButton(
-                  onPressed: () async {
+                icon: const Icon(Icons.download),
+                onPressed: () async {
+                  setState(() {
+                    if (widget.fileSyncStatus is MyFileStatus) {
+                      // not meant to download your own files 'yet'
+                      print('not meant to download your own files yet');
+
+                      return;
+                    }
+                    widget.fileSyncStatus =
+                        (widget.fileSyncStatus as TheirFileStatus)
+                            .copyWith(downloadStatus: SyncStatus.syncing);
+                  });
+                  final uint8List = await downloadHandler();
+                  if (uint8List.isEmpty) {
+                    print('not meant to download your own files yet');
+                    return;
+                  }
+                  setState(() {
+                    widget.fileSyncStatus =
+                        (widget.fileSyncStatus as TheirFileStatus)
+                            .copyWith(downloadStatus: SyncStatus.synced);
+                  });
+                  final temp =
+                      (widget.fileSyncStatus as TheirFileStatus).localPathFull;
+                  if (temp.isEmpty) {
+                    debugPrint('widget.fileSyncStatus.localPathFull is empty');
+                    return;
+                  }
+                  try {
+                    // await save(temp, uint8List);
+                    await File(temp).writeAsBytes(uint8List);
+                    // save(temp, uint8List);
+                    print('save file success in $temp');
+
+                    player
+                        .setFilePath((widget.fileSyncStatus as TheirFileStatus)
+                            .localPathFull)
+                        .then((value) {
+                      setState(() {
+                        duration = value;
+                      });
+                    });
+                  } on FileSystemException catch (e) {
+                    print('save file exception $e');
                     setState(() {
                       if (widget.fileSyncStatus is MyFileStatus) {
                         widget.fileSyncStatus = MyFileStatus(
-                            SyncStatus.syncing, widget.fileSyncStatus.filePath);
+                            SyncStatus.remoteNotSynced,
+                            widget.fileSyncStatus.filePath);
                       } else {
                         widget.fileSyncStatus = TheirFileStatus(
-                            SyncStatus.syncing, widget.fileSyncStatus.filePath);
+                            SyncStatus.remoteNotSynced,
+                            widget.fileSyncStatus.filePath);
                       }
                     });
-                    //TODO check connectivity
-                    final audio =
-                        await AzureBlobAbstract.downloadAudioFromAzure(
-                            downloadPath +
-                                '/' +
-                                widget.fileSyncStatus.filePath);
-                    //TODO save file
-                  },
-                  icon: const Icon(Icons.download))
+                  }
+                },
+              )
             else if (widget.fileSyncStatus.status == SyncStatus.syncing)
-              const CircularProgressIndicator()
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  IconButton(
+                      icon: const Icon(Icons.cancel),
+                      onPressed: () {
+                        client.close();
+                        setState(() {
+                          if (widget.fileSyncStatus is MyFileStatus) {
+                            widget.fileSyncStatus = MyFileStatus(
+                                SyncStatus.remoteNotSynced,
+                                widget.fileSyncStatus.filePath);
+                          } else {
+                            widget.fileSyncStatus = TheirFileStatus(
+                                SyncStatus.remoteNotSynced,
+                                widget.fileSyncStatus.filePath);
+                          }
+                        });
+                        return;
+                      }),
+                  const CircularProgressIndicator(),
+                ],
+              )
             else
               StreamBuilder<PlayerState>(
                 stream: player.playerStateStream,

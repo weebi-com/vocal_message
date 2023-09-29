@@ -1,3 +1,5 @@
+import 'package:vocal_message/src/globals.dart';
+
 enum SyncStatus {
   remoteNotSynced,
   localNotSynced,
@@ -9,6 +11,9 @@ abstract class FileSyncStatus {
   final SyncStatus status;
   final String filePath;
   const FileSyncStatus(this.status, this.filePath);
+
+  @override
+  toString() => '$status, $filePath';
 }
 
 extension NamesOnlyOnLocalPath on Iterable<String> {
@@ -34,6 +39,14 @@ class MyFileStatus implements FileSyncStatus {
 
   @override
   SyncStatus get status => uploadStatus;
+
+  @override
+  toString() => '$runtimeType, $status, $filePath';
+
+  MyFileStatus copyWith({SyncStatus? uploadStatus, String? localPath}) {
+    return MyFileStatus(
+        uploadStatus ?? this.uploadStatus, localPath ?? this.localPath);
+  }
 }
 
 class TheirFileStatus implements FileSyncStatus {
@@ -41,9 +54,25 @@ class TheirFileStatus implements FileSyncStatus {
   final String azurePath;
   TheirFileStatus(this.downloadStatus, this.azurePath);
 
+  String get localPathFull {
+    if (downloadStatus != SyncStatus.synced) {
+      return '';
+    } else {
+      return filePath.nameOnly.localPathFull;
+    }
+  }
+
   @override
   String get filePath => azurePath;
 
   @override
   SyncStatus get status => downloadStatus;
+
+  @override
+  toString() => '$runtimeType, $status, $filePath';
+
+  TheirFileStatus copyWith({SyncStatus? downloadStatus, String? azurePath}) {
+    return TheirFileStatus(
+        downloadStatus ?? this.downloadStatus, azurePath ?? this.azurePath);
+  }
 }

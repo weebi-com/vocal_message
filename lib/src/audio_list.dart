@@ -9,15 +9,14 @@ class AudioList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint(
-        'AudioState.files.length ${AudioState.allAudioFiles.all.length}');
-
     return FutureBuilder<AllAudioFiles>(
         future: getLocalAudioFetchFilesAndSetStatus(
             '/audio-test/jimmy_jo', isConnected),
         builder: (_, snap) {
           if (snap.connectionState == ConnectionState.waiting) {
-            return const ColoredBox(color: Colors.black);
+            return SizedBox(
+                width: MediaQuery.of(context).size.width * 0.5,
+                child: const CircularProgressIndicator());
           } else if (snap.hasError) {
             debugPrint('${snap.error}');
             return ColoredBox(

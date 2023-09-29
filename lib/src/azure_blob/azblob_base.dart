@@ -1,5 +1,6 @@
 library az_blob;
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
@@ -131,10 +132,17 @@ class AzureStorage {
     return twoStupidString;
   }
 
+  Stream<T> onDone<T>(Stream<T> stream, void Function() onDone) =>
+      stream.transform(StreamTransformer.fromHandlers(handleDone: (sink) {
+        sink.close();
+        onDone();
+      }));
+
   /// List Blobs. (Raw API)
   ///
   /// You can use `await response.stream.bytesToString();` to get blob listing as XML format.
-  Future<http.StreamedResponse> listBlobsRaw(String path) async {
+  Future<http.StreamedResponse> listBlobsRaw(
+      String path, http.Client client) async {
     final stuff = _splitPathSegment(path);
     // stuff == var (container, rest)
     var request = http.Request(
@@ -145,14 +153,33 @@ class AzureStorage {
           if (stuff.last != null) "prefix": stuff.last ?? '',
         }));
     sign(request);
-    return request.send();
+    return await _sendRequest(request, client);
+  }
+
+  Future<http.StreamedResponse> _sendRequest(
+      http.Request request, http.Client client) async {
+    // copy paste from http package to use a single that can be closed
+    try {
+      var response = await client.send(request);
+      var stream = onDone(response.stream, client.close);
+      return http.StreamedResponse(http.ByteStream(stream), response.statusCode,
+          contentLength: response.contentLength,
+          request: response.request,
+          headers: response.headers,
+          isRedirect: response.isRedirect,
+          persistentConnection: response.persistentConnection,
+          reasonPhrase: response.reasonPhrase);
+    } catch (_) {
+      client.close();
+      rethrow;
+    }
   }
 
   /// Get Blob.
-  Future<http.StreamedResponse> getBlob(String path) async {
+  Future<http.StreamedResponse> getBlob(String path, http.Client client) async {
     var request = http.Request('GET', uri(path: path));
     sign(request);
-    return request.send();
+    return await _sendRequest(request, client);
   }
 
   /// Delete Blob

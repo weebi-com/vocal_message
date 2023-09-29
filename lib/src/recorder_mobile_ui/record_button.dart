@@ -11,7 +11,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 
 class RecorderMobileView extends StatefulWidget {
@@ -131,7 +130,7 @@ class _RecorderMobileViewState extends State<RecorderMobileView> {
         if (kIsWeb) {
           path = '';
         } else {
-          path = p.join(Globals.theirFilesDir.path,
+          path = p.join(Globals.myFilesDir.path,
               'audio_${DateTime.now().millisecondsSinceEpoch}.wav');
         }
         await _audioRecorder.start(config, path: path);

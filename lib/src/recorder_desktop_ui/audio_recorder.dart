@@ -4,7 +4,6 @@ import 'package:vocal_message/src/globals.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 
 class AudioRecorderView extends StatefulWidget {
@@ -64,7 +63,7 @@ class _AudioRecorderViewState extends State<AudioRecorderView> {
         if (kIsWeb) {
           path = '';
         } else {
-          path = p.join(Globals.theirFilesDir.path,
+          path = p.join(Globals.myFilesDir.path,
               'audio_${DateTime.now().millisecondsSinceEpoch}.wav');
         }
         await _audioRecorder.start(config, path: path);

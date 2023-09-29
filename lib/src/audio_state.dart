@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:http/http.dart' as http;
 import 'package:vocal_message/src/azure_blob/azblob_abstract.dart';
 import 'package:vocal_message/src/globals.dart';
 import 'package:vocal_message/src/file_status.dart';
@@ -13,12 +13,15 @@ class AudioState {
   static AllAudioFiles allAudioFiles = AllAudioFiles([], []);
 }
 
-Future<List<String>> fetchRemoteAudioFiles(String azurePath) async {
-  final files = await AzureBlobAbstract.fetchRemoteAudioFilesInfo(azurePath);
+Future<List<String>> fetchRemoteAudioFiles(
+    String azurePath, http.Client client) async {
+  print('azurePath path : $azurePath');
+  final files =
+      await AzureBlobAbstract.fetchRemoteAudioFilesInfo(azurePath, client);
   final fileNames = <String>[];
+  debugPrint('files ${files.length}');
   for (final file in files) {
     fileNames.add(file.fileName);
-    debugPrint(file.fileName);
   }
   return fileNames;
 }
@@ -49,8 +52,7 @@ List<String> getOnlyTheirLocalAudioFiles() {
 Future<AllAudioFiles> getLocalAudioFetchFilesAndSetStatus(
     String azurePath, bool isConnected) async {
   if (isConnected) {
-    final allLocalFiles = getAllLocalAudioFiles();
-    final allAudios = await fetchFilesAndSetStatus(azurePath, allLocalFiles);
+    final allAudios = await fetchFilesAndSetStatus(azurePath);
     return allAudios;
   } else {
     return getLocalFilesAndStatusOnly();
@@ -73,39 +75,47 @@ AllAudioFiles getLocalFilesAndStatusOnly() {
   return AllAudioFiles(myFiles, theirFiles);
 }
 
-Future<AllAudioFiles> fetchFilesAndSetStatus(
-    String azurePath, List<String> localFiles) async {
-  final upFiles = <MyFileStatus>[];
-  final downFiles = <TheirFileStatus>[];
-  final remoteFilesUploads =
-      await fetchRemoteAudioFiles(azurePath + '/uploads');
-  final remoteFilesDownload =
-      await fetchRemoteAudioFiles(azurePath + '/downloads');
-  final remoteFiles = [...remoteFilesUploads, ...remoteFilesDownload];
-  for (final localFile in localFiles) {
-    if (remoteFiles.contains(localFile.nameOnly)) {
+Future<AllAudioFiles> fetchFilesAndSetStatus(String azurePath) async {
+  final client = http.Client();
+  final myFiles = <MyFileStatus>[];
+  final theirFiles = <TheirFileStatus>[];
+  final myRemoteFiles =
+      await fetchRemoteAudioFiles(azurePath + '/uploads', client);
+  final myLocalFiles = getOnlyMyLocalAudioFiles();
+  for (final localFile in myLocalFiles) {
+    if (myRemoteFiles.contains(localFile.nameOnly)) {
       // local file exists in azure
       final upFile = MyFileStatus(SyncStatus.synced, localFile);
-      upFiles.add(upFile);
+      myFiles.add(upFile);
     } else {
       // local file does not exists in azure, should be synced
       final upFile = MyFileStatus(SyncStatus.localNotSynced, localFile);
-      upFiles.add(upFile);
+      myFiles.add(upFile);
     }
   }
-  for (final remoteFile in remoteFiles) {
-    if (localFiles.namesOnly.contains(remoteFile)) {
+  debugPrint('myFiles ${myFiles.length}');
+
+  final client2 = http.Client();
+
+  final theirLocalFiles = getOnlyTheirLocalAudioFiles();
+
+  final theirRemoteFiles =
+      await fetchRemoteAudioFiles(azurePath + '/downloads', client2);
+  print('theirRemoteFiles ${theirRemoteFiles.length}');
+  for (final remoteFile in theirRemoteFiles) {
+    if (theirLocalFiles.namesOnly.contains(remoteFile)) {
       // remote file has already been downloaded from azure
       final downFile = TheirFileStatus(SyncStatus.synced, remoteFile);
-      downFiles.add(downFile);
+      theirFiles.add(downFile);
     } else {
       // remote file has not been downloaded from azure
+      print('remoteFile $remoteFile');
       final downFile = TheirFileStatus(SyncStatus.remoteNotSynced, remoteFile);
-      downFiles.add(downFile);
+      theirFiles.add(downFile);
     }
   }
-  debugPrint('upFiles ${upFiles.length}');
-  return AllAudioFiles(upFiles, downFiles);
+  debugPrint('theirFiles ${theirFiles.length}');
+  return AllAudioFiles(myFiles, theirFiles);
 }
 
 class AllAudioFiles {

@@ -2,6 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 
+extension LocalPathDownloadedFile on String {
+  String get localPathFull =>
+      Globals.theirFilesDir.path + Platform.pathSeparator + this;
+}
+
 abstract class Globals {
   Globals._();
   static String documentPath = '';
@@ -16,9 +21,9 @@ abstract class Globals {
   }
 
   static Directory get theirFilesDir =>
-      Directory(documentPath + Platform.pathSeparator + 'up');
+      Directory(documentPath + Platform.pathSeparator + 'their');
   static Directory get myFilesDir =>
-      Directory(documentPath + Platform.pathSeparator + 'down');
+      Directory(documentPath + Platform.pathSeparator + 'my');
 
   static const double borderRadius = 27;
   static const double defaultPadding = 8;
