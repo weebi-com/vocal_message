@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EnumerationResults ServiceEndpoint="https://weebiaudio.blob.core.windows.net/" ContainerName="audio-test">    
+    <Blobs>
+        <Blob>
+            <Name>test/audio.wav</Name>
+            <Properties>
+                <Creation-Time>Sun, 17 Sep 2023 22:17:53 GMT</Creation-Time>
+                <Last-Modified>Sun, 24 Sep 2023 21:52:35 GMT</Last-Modified>
+                <Etag>0x8DBBD48902D52C4</Etag>
+                <Content-Length>209920</Content-Length>
+                <Content-Type>audio/wav</Content-Type>
+                <Content-Encoding />
+                <Content-Language />
+                <Content-CRC64 />
+                <Content-MD5>4p1x8yHZ7vBTaNALbVvW4Q==</Content-MD5>
+                <Cache-Control />
+                <Content-Disposition />
+                <BlobType>BlockBlob</BlobType>
+                <AccessTier>Cool</AccessTier>
+                <AccessTierInferred>true</AccessTierInferred>
+                <LeaseStatus>unlocked</LeaseStatus>
+                <LeaseState>available</LeaseState>
+                <ServerEncrypted>true</ServerEncrypted>
+            </Properties>
+            <OrMetadata />
+        </Blob>
+    </Blobs>
+    <NextMarker />
+</EnumerationResults>
