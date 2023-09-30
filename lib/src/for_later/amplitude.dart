@@ -2,8 +2,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
-// dirty
-// not working yet
+// bad result on wider screen e.g. desktop
+/// not working yet
 class AmplitudeWidget extends StatefulWidget {
   final bool me;
   final AudioPlayer player;

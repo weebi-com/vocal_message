@@ -5,8 +5,8 @@ import 'package:vocal_message/src/file_status.dart';
 import 'package:path/path.dart' as p;
 import 'package:vocal_message/src/audio_state.dart';
 import 'package:vocal_message/src/globals.dart';
-import 'package:vocal_message/src/widgets/flow_shader.dart';
-import 'package:vocal_message/src/widgets/lottie_animation.dart';
+import 'package:vocal_message/src/recorder_mobile_ui/flow_shader.dart';
+import 'package:vocal_message/src/recorder_mobile_ui/lottie_animation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
@@ -14,7 +14,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:record/record.dart';
 import 'package:http/http.dart' as http;
 
-//TODO : make upload cancelable
 class RecorderMobileView extends StatefulWidget {
   final AnimationController controller;
   const RecorderMobileView({

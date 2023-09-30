@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:vocal_message/src/azure_blob/audio_file_parser.dart';
 import 'package:vocal_message/src/azure_blob/azblob_abstract.dart';
 import 'package:vocal_message/src/globals.dart';
 import 'package:vocal_message/src/file_status.dart';
@@ -13,17 +14,11 @@ class AudioState {
   static AllAudioFiles allAudioFiles = AllAudioFiles([], []);
 }
 
-Future<List<String>> fetchRemoteAudioFiles(
+Future<List<AzureAudioFileParser>> fetchRemoteAudioFiles(
     String azurePath, http.Client client) async {
-  print('azurePath path : $azurePath');
   final files =
       await AzureBlobAbstract.fetchRemoteAudioFilesInfo(azurePath, client);
-  final fileNames = <String>[];
-  debugPrint('files ${files.length}');
-  for (final file in files) {
-    fileNames.add(file.fileName);
-  }
-  return fileNames;
+  return files;
 }
 
 List<String> getAllLocalAudioFiles() {
@@ -50,9 +45,9 @@ List<String> getOnlyTheirLocalAudioFiles() {
 }
 
 Future<AllAudioFiles> getLocalAudioFetchFilesAndSetStatus(
-    String azurePath, bool isConnected) async {
+    bool isConnected) async {
   if (isConnected) {
-    final allAudios = await fetchFilesAndSetStatus(azurePath);
+    final allAudios = await fetchFilesAndSetStatus(Globals.azureRootPath);
     return allAudios;
   } else {
     return getLocalFilesAndStatusOnly();
@@ -68,8 +63,9 @@ AllAudioFiles getLocalFilesAndStatusOnly() {
     myFiles.add(temp);
   }
   final theirLocalFiles = getOnlyTheirLocalAudioFiles();
-  for (final file in theirLocalFiles) {
-    final temp = TheirFileStatus(SyncStatus.synced, file);
+  for (final filePath in theirLocalFiles) {
+    final temp = TheirFileStatus(
+        SyncStatus.synced, filePath, File(filePath).lastModifiedSync(), 0);
     theirFiles.add(temp);
   }
   return AllAudioFiles(myFiles, theirFiles);
@@ -80,10 +76,10 @@ Future<AllAudioFiles> fetchFilesAndSetStatus(String azurePath) async {
   final myFiles = <MyFileStatus>[];
   final theirFiles = <TheirFileStatus>[];
   final myRemoteFiles =
-      await fetchRemoteAudioFiles(azurePath + '/uploads', client);
+      await fetchRemoteAudioFiles(Globals.azureMyFilesPath, client);
   final myLocalFiles = getOnlyMyLocalAudioFiles();
   for (final localFile in myLocalFiles) {
-    if (myRemoteFiles.contains(localFile.nameOnly)) {
+    if (myRemoteFiles.filesNameOnly.contains(localFile.nameOnly)) {
       // local file exists in azure
       final upFile = MyFileStatus(SyncStatus.synced, localFile);
       myFiles.add(upFile);
@@ -100,17 +96,27 @@ Future<AllAudioFiles> fetchFilesAndSetStatus(String azurePath) async {
   final theirLocalFiles = getOnlyTheirLocalAudioFiles();
 
   final theirRemoteFiles =
-      await fetchRemoteAudioFiles(azurePath + '/downloads', client2);
-  print('theirRemoteFiles ${theirRemoteFiles.length}');
+      await fetchRemoteAudioFiles(Globals.azureTheirFilesPath, client2);
+  debugPrint('theirRemoteFiles ${theirRemoteFiles.length}');
   for (final remoteFile in theirRemoteFiles) {
-    if (theirLocalFiles.namesOnly.contains(remoteFile)) {
+    if (theirLocalFiles.namesOnly.contains(remoteFile.fileName)) {
       // remote file has already been downloaded from azure
-      final downFile = TheirFileStatus(SyncStatus.synced, remoteFile);
+      final downFile = TheirFileStatus(
+        SyncStatus.synced,
+        remoteFile.fileName,
+        remoteFile.creationTime,
+        remoteFile.contentLength,
+      );
       theirFiles.add(downFile);
     } else {
       // remote file has not been downloaded from azure
-      print('remoteFile $remoteFile');
-      final downFile = TheirFileStatus(SyncStatus.remoteNotSynced, remoteFile);
+      // debugPrint('remoteFile $remoteFile');
+      final downFile = TheirFileStatus(
+        SyncStatus.remoteNotSynced,
+        remoteFile.fileName,
+        remoteFile.creationTime,
+        remoteFile.contentLength,
+      );
       theirFiles.add(downFile);
     }
   }
@@ -123,5 +129,6 @@ class AllAudioFiles {
   final List<TheirFileStatus> theirFiles;
   const AllAudioFiles(this.myFiles, this.theirFiles);
 
-  List<FileSyncStatus> get all => [...myFiles, ...theirFiles];
+  List<FileSyncStatus> get all => [...myFiles, ...theirFiles]
+    ..sort((a, b) => a.dateLastModif.compareTo(b.dateLastModif));
 }

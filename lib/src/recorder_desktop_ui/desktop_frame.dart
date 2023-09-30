@@ -1,4 +1,4 @@
-import 'package:vocal_message/src/recorder_desktop_ui/audio_rec_player.dart';
+import 'package:vocal_message/src/recorder_desktop_ui/audio_rec_desk_player.dart';
 import 'package:vocal_message/src/recorder_desktop_ui/audio_recorder.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

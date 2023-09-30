@@ -1,21 +1,23 @@
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:vocal_message/example/const.dart';
-import 'package:vocal_message/src/azure_blob/audio_parser.dart';
+import 'package:vocal_message/src/azure_blob/audio_file_parser.dart';
 import 'package:vocal_message/src/azure_blob/azblob_base.dart';
 import 'package:flutter/foundation.dart';
 
 abstract class AzureBlobAbstract {
-  static const String _connectionString = connectionString;
+  static String _connectionString = '';
+  static setConnectionString(String val) {
+    _connectionString = val;
+  }
 
-  static Future<List<AzureAudioFile>> fetchRemoteAudioFilesInfo(
+  static Future<List<AzureAudioFileParser>> fetchRemoteAudioFilesInfo(
       String folderPath, http.Client client) async {
     final storage = AzureStorage.parse(_connectionString);
 
     try {
       final blobs = await storage.listBlobsRaw(folderPath, client);
       final response = await blobs.stream.bytesToString();
-      final azureFiles = AzureAudioFile.parseXml(response);
+      final azureFiles = AzureAudioFileParser.parseXml(response);
       return azureFiles.toList();
     } on AzureStorageException catch (ex) {
       debugPrint('AzureStorageException ${ex.message}');
@@ -32,7 +34,8 @@ abstract class AzureBlobAbstract {
     } on AzureStorageException catch (ex) {
       debugPrint('AzureStorageException ${ex.message}');
       return Uint8List.fromList([]);
-    } on http.ClientException catch (e) {
+    } on http.ClientException {
+      // catch Connection closed while receiving data
       return Uint8List.fromList([]);
     }
   }
