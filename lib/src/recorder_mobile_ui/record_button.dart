@@ -428,7 +428,7 @@ class _RecorderMobileViewState extends State<RecorderMobileView> {
       icon = const Icon(Icons.pause, color: Colors.white, size: 18);
       color = Colors.blue.withOpacity(0.6);
     } else {
-      final theme = Theme.of(context);
+      final theme = ThemeData.dark();
       icon = const Icon(Icons.mic, color: Colors.white, size: 18);
       color = theme.primaryColor.withOpacity(0.5);
     }
@@ -462,7 +462,7 @@ class _RecorderMobileViewState extends State<RecorderMobileView> {
           clipBehavior: Clip.hardEdge,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Theme.of(context).primaryColor,
+            color: ThemeData.dark().primaryColor,
           ),
         ),
       ),

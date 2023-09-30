@@ -186,7 +186,7 @@ class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
           children: [
             if (widget.fileSyncStatus.status == SyncStatus.remoteNotSynced)
               IconButton(
-                icon: const Icon(Icons.download),
+                icon: const Icon(Icons.download, color: Colors.white),
                 onPressed: () async => downloadAndSaveFile(),
               )
             else if (widget.fileSyncStatus.status == SyncStatus.remoteSyncing)
@@ -203,7 +203,7 @@ class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
                 child: Stack(
                   alignment: Alignment.center,
                   children: const [
-                    Icon(Icons.cancel),
+                    Icon(Icons.cancel, color: Colors.white),
                     CircularProgressIndicator(),
                   ],
                 ),
@@ -218,22 +218,22 @@ class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
                   if (processingState == ProcessingState.loading ||
                       processingState == ProcessingState.buffering) {
                     return IconButton(
-                      icon: const Icon(Icons.play_arrow),
+                      icon: const Icon(Icons.play_arrow, color: Colors.white),
                       onPressed: player.play,
                     );
                   } else if (playing != true) {
                     return IconButton(
-                      icon: const Icon(Icons.play_arrow),
+                      icon: const Icon(Icons.play_arrow, color: Colors.white),
                       onPressed: player.play,
                     );
                   } else if (processingState != ProcessingState.completed) {
                     return IconButton(
-                      icon: const Icon(Icons.pause),
+                      icon: const Icon(Icons.pause, color: Colors.white),
                       onPressed: player.pause,
                     );
                   } else {
                     return IconButton(
-                      icon: const Icon(Icons.replay),
+                      icon: const Icon(Icons.replay, color: Colors.white),
                       onPressed: () {
                         player.seek(Duration.zero);
                       },
