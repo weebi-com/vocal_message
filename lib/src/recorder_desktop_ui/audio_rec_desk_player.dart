@@ -77,7 +77,7 @@ class AudioRecPlayerState extends State<AudioRecPlayer> {
                 _buildSlider(constraints.maxWidth - _controlSize),
                 ClipOval(
                   child: Material(
-                    color: ThemeData.dark().primaryColor.withOpacity(0.1),
+                    color: Theme.of(context).primaryColor.withOpacity(0.1),
                     child: InkWell(
                       child: const SizedBox(
                         width: _controlSize,
@@ -103,7 +103,7 @@ class AudioRecPlayerState extends State<AudioRecPlayer> {
             // wrap this in a green circle
             ClipOval(
               child: Material(
-                color: ThemeData.dark().colorScheme.secondary,
+                color: Theme.of(context).colorScheme.secondary,
                 child: InkWell(
                   child: IconButton(
                     icon: const Icon(Icons.upload, color: Colors.white),
@@ -153,7 +153,7 @@ class AudioRecPlayerState extends State<AudioRecPlayer> {
       icon = const Icon(Icons.pause, color: Colors.red, size: 30);
       color = Colors.red.withOpacity(0.1);
     } else {
-      final theme = ThemeData.dark();
+      final theme = Theme.of(context);
       icon = const Icon(Icons.play_arrow, color: Color(0xFF73748D), size: 30);
       color = theme.primaryColor.withOpacity(0.1);
     }
@@ -192,8 +192,8 @@ class AudioRecPlayerState extends State<AudioRecPlayer> {
     return SizedBox(
       width: width,
       child: Slider(
-        activeColor: ThemeData.dark().primaryColor,
-        inactiveColor: ThemeData.dark().colorScheme.secondary,
+        activeColor: Theme.of(context).primaryColor,
+        inactiveColor: Theme.of(context).colorScheme.secondary,
         onChanged: (v) {
           if (duration != null) {
             final position = v * duration.inMilliseconds;

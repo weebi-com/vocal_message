@@ -82,7 +82,7 @@ class _AmplitudeWidgetState extends State<AmplitudeWidget>
   Widget build(BuildContext context) {
     final size = MediaQueryData.fromWindow(WidgetsBinding.instance.window).size;
     final double noiseWidth = 28.5 * (size.width / 100);
-    final ThemeData theme = ThemeData.dark();
+    final ThemeData theme = Theme.of(context);
     final newTHeme = theme.copyWith(
       sliderTheme: SliderThemeData(
         trackShape: CustomTrackShape(),

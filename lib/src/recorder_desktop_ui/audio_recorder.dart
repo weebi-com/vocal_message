@@ -181,7 +181,7 @@ class _AudioRecorderViewState extends State<AudioRecorderView> {
       icon = const Icon(Icons.stop, color: Colors.red, size: 30);
       color = Colors.red.withOpacity(0.1);
     } else {
-      final theme = ThemeData.dark();
+      final theme = Theme.of(context);
       icon = const Icon(Icons.mic, color: Colors.white, size: 30);
       color = theme.primaryColor.withOpacity(0.1);
     }
@@ -214,7 +214,7 @@ class _AudioRecorderViewState extends State<AudioRecorderView> {
       icon = const Icon(Icons.pause, color: Colors.red, size: 30);
       color = Colors.red.withOpacity(0.1);
     } else {
-      final theme = ThemeData.dark();
+      final theme = Theme.of(context);
       icon = const Icon(Icons.mic, color: Colors.red, size: 30);
       color = theme.primaryColor.withOpacity(0.1);
     }

@@ -122,7 +122,7 @@ class _VocalMessagesAndRecorderViewState
               ),
             ),
             Container(
-              color: ThemeData.dark().primaryColor.withOpacity(0.8),
+              color: Theme.of(context).primaryColor.withOpacity(0.8),
               height: 8,
             ),
             Padding(
