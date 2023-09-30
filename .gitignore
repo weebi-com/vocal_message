@@ -45,3 +45,5 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 lib/example/const.dart
+pubspec.lock
+example/pubspec.lock
