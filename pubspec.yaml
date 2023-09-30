@@ -12,7 +12,7 @@ dependencies:
     sdk: flutter
   just_audio: ^0.9.11
   audioplayers: ^4.1.0 #^5.1.0 
-  font_awesome_flutter: ^9.1.0
+  font_awesome_flutter: ^10.1.0
   permission_handler: ^10.0.0 #^8.1.6
   record: #5.0.0-beta.3 depends on record_web which depends on sdk >= 3
     git: 
