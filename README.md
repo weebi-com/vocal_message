@@ -10,11 +10,17 @@
 	- /audio-test/jimmy_jo/uploads // where app-user's vocal message will be saved
 	- /audio-test/jimmy_jo/downloads // where admin should save vocal message replies (.wav)
 
+- it is only possible to reply to a user through azure web console 
+  - you will only see a user folder if they have sent at least one audio
+  - drag and drop your audio in user folder and in the view set path : uploads
+  - user will need to update view to see the ready to download voice message
 
-# disclaimer
-- I kept the supa cool effect tap-release animation for mobile, but twisted it using recorder
-- lot of code duplication since i used recorder example for desktop
-- yet the goal was to provide sync and it is reached
+- toCheck : if one knows the user folderName, is it possible to create it manually to init voice messaging ?
+
+# roadmap
+- nextMilestone : provide a back-office app to ease keeping track of messages received and replies
+- nextPotentialMilestone : handle other types of files, such as __contacts__, photos and position
+- outside of scope : chat_box / chatting
 
 # backlog
 ## support needed
@@ -31,10 +37,11 @@
 - UX - set a max duration to prevent users from uploading endless empty files
 - codeCourtesy - stick to audioplayers instead of just_audio + audioplayers
 
-# roadmap
-- nextMilestone : provide a back-office app to ease keeping track of messages received and replies
-- nextPotentialMilestone : handle other types of files, such as __contacts__, photos and position
-- outside of scope : chat_box / chatting
+# disclaimer
+- I kept the supa cool effect tap-release animation on mobile, but twisted it to remove chat
+- also I updated recording process using recorder example
+- I also used recorder example for desktop, which is easier with a mouse
+- lot of code duplication there but the goal was to provide sync quickly
 
 # build reminders
 ## android 
