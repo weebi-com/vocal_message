@@ -43,9 +43,12 @@ And these other open source packages, already used in audio-chat :
 - add more languages in locals to make this universal
 
 ## niceToHave 
-- UX - handle progress syncing 
-- UI - niceToHave : display audio waves, see for_later/amplitude.dart, which yielded unsatisfying result
-- UX - set a max duration to prevent users from uploading endless empty
+- UX - display syncing progress
+- UI - while playing display audio waves 
+  - I tried [voice_message_package](https://pub.dev/packages/voice_message_package) but it yielded unsatisfying result
+    - see in for_later/amplitude.dart
+- UI - while recording display audio amplitude using a [gauge chart](https://github.com/GeekyAnts/GaugesFlutter)
+- UX - set a max duration to prevent users from uploading endless empty files
 - codeCourtesy - stick to audioplayers instead of just_audio + audioplayers
 
 - nextPotentialMilestone : handle other types of files, such as __contacts__, photos and position

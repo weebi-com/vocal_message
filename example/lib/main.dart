@@ -1,16 +1,21 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:voc_up/home_page.dart';
 import 'package:voc_up/theme.dart';
+
 import 'package:vocal_message/azure_blob2.dart';
 import 'package:vocal_message/logic.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  AzureBlobAbstract.setConnectionString(
-      ''); // TODO passit here, looks like DefaultEndpointsProtocol=https;AccountName=...
+  // pass azure connection string below
+  // it looks like DefaultEndpointsProtocol=https;AccountName=...
+  AzureBlobAbstract.setConnectionString('');
+
+  // set both the container use in azure blob and the user folder
   Globals.setAzureAudioConfig =
       AzureAudioConfig(containerName: 'audio-test', userFolderName: 'john_doe');
   runApp(const AppDocDirectory());
@@ -56,7 +61,9 @@ class MyApp extends StatelessWidget {
   ];
   @override
   Widget build(BuildContext context) {
+    // set-up local here (default is fr)
     Globals.locale = 'fr';
+
     return MaterialApp(
       home: const HomePage(),
       locale: const Locale('fr'),

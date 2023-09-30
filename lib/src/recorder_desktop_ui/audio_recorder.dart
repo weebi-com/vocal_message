@@ -156,7 +156,7 @@ class _AudioRecorderViewState extends State<AudioRecorderView> {
         ),
         if (2 + 2 == 5 && _amplitude != null && _amplitude?.current != 0.0) ...[
           const SizedBox(height: 12),
-          // TODO simply use a vertical slider here
+          // prefer a vertical slider here, like a gauge chart https://github.com/GeekyAnts/GaugesFlutter
           Text('Current: ${_amplitude?.current ?? 0.0}'),
           Text('Max: ${_amplitude?.max ?? 0.0}'),
         ],
