@@ -55,10 +55,19 @@ And these other open source packages, already used in audio-chat :
   
 - outside of scope : chat_box / chatting
 
-# build tips
-## android manifest
+# build reminders
+## android 
+> manifest
 <uses-permission android:name="android.permission.RECORD_AUDIO" />
 <uses-permission android:name="android.permission.VIBRATE" />
+
+## ios
+> Runner.entitlements
+<key>com.apple.security.device.audio-input</key>
+<true/>
+<key>com.apple.security.network.client</key>
+<true/>
+<key>com.apple.security.files.downloads.read-write</key>
 
 ## macos 
 > podfile
@@ -66,10 +75,8 @@ platform :osx, '10.15'
 
 > macos/Runner/Release.entitlements
 <key>com.apple.security.device.audio-input</key>
-	<true/>
-	<key>com.apple.security.network.client</key>
-	<true/>
-	<key>com.apple.security.files.user-selected.read-write</key>
-	<true/>
-	<key>com.apple.security.files.downloads.read-write</key>
-	<true/>
+<true/>
+<key>com.apple.security.network.client</key>
+<true/>
+<key>com.apple.security.files.downloads.read-write</key>
+<true/>
