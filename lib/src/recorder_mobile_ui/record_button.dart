@@ -26,10 +26,11 @@ class RecorderMobileView extends StatefulWidget {
 }
 
 class _RecorderMobileViewState extends State<RecorderMobileView> {
-  static const double size = 55;
+  static const double size = 50;
 
   final double lockerHeight = 200;
-  double timerWidth = 0;
+  double cancelTimerWidth = 0;
+  double lockTimerWidth = 0;
 
   late Animation<double> buttonScaleAnimation;
   late Animation<double> timerAnimation;
@@ -77,11 +78,12 @@ class _RecorderMobileViewState extends State<RecorderMobileView> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    timerWidth =
-        MediaQuery.of(context).size.width - 20 * Globals.defaultPadding - 4;
-    timerAnimation =
-        Tween<double>(begin: timerWidth + Globals.defaultPadding, end: 0)
-            .animate(
+    lockTimerWidth = MediaQuery.of(context).size.width * 0.7;
+    cancelTimerWidth =
+        MediaQuery.of(context).size.width - (6.2 * Globals.defaultPadding);
+    timerAnimation = Tween<double>(
+            begin: (cancelTimerWidth) + Globals.defaultPadding, end: 0)
+        .animate(
       CurvedAnimation(
         parent: widget.controller,
         curve: const Interval(0.2, 1, curve: Curves.easeIn),
@@ -107,8 +109,8 @@ class _RecorderMobileViewState extends State<RecorderMobileView> {
     super.dispose();
   }
 
-  /// FROM RECORDER LIB
   ///
+  /// FROM RECORDER LIB
   Future<void> _start() async {
     try {
       if (await _audioRecorder.hasPermission()) {
@@ -204,7 +206,7 @@ class _RecorderMobileViewState extends State<RecorderMobileView> {
     }
   }
 
-  Widget _buildText() {
+  Widget _buildTimerText() {
     if (_recordState != RecordState.stop) {
       return _buildTimer();
     }
@@ -245,11 +247,15 @@ class _RecorderMobileViewState extends State<RecorderMobileView> {
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        if (isLocked == false && _recordState == RecordState.record) ...[
-          lockSlider(),
-          cancelSlider(),
-        ],
-        if (isLocked) timerLocked() else audioButton(),
+        if (isLocked)
+          timerLocked()
+        else ...[
+          if (_recordState == RecordState.record) ...[
+            cancelSlider(),
+            lockSlider(),
+          ],
+          audioButton(),
+        ]
       ],
     );
   }
@@ -291,7 +297,7 @@ class _RecorderMobileViewState extends State<RecorderMobileView> {
       right: -timerAnimation.value,
       child: Container(
         height: size,
-        width: timerWidth - 40,
+        width: cancelTimerWidth,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(Globals.borderRadius),
           color: Colors.red,
@@ -302,8 +308,8 @@ class _RecorderMobileViewState extends State<RecorderMobileView> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,
             children: [
-              showLottie ? const LottieAnimation() : _buildText(),
-              const SizedBox(width: 22),
+              showLottie ? const LottieAnimation() : _buildTimerText(),
+              const SizedBox(width: size),
               FlowShader(
                 child: const Icon(Icons.keyboard_arrow_left),
                 duration: const Duration(seconds: 3),
@@ -318,103 +324,89 @@ class _RecorderMobileViewState extends State<RecorderMobileView> {
   }
 
   Widget timerLocked() {
-    return
-        //Positioned(
-        //  right: 15,
-        //  bottom: 15,
-        //  child:
-        Container(
-      height: size,
-      width: MediaQuery.of(context).size.width - 20,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(Globals.borderRadius),
-        color: Colors.grey,
-      ),
+    return SizedBox(
+      height: size * 2, // _recordState == RecordState.pause ? size * 2 :
+      width: lockTimerWidth,
       child: Padding(
-        padding: const EdgeInsets.only(left: 15, right: 25),
-        child: Row(
+        padding: const EdgeInsets.only(left: 5, right: 5),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (_recordState == RecordState.pause)
-              IconButton(
-                icon: const Icon(
-                  Icons.delete,
-                  size: 18,
-                  color: Colors.red,
-                ),
-                onPressed: () async {
-                  setState(() {
-                    _recordState == RecordState.stop;
-                    isLocked = false;
-                    showLottie = true;
-                  });
-                  if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
-                    Vibrate.feedback(FeedbackType.heavy);
-                  }
-                  var filePath = await _stop();
-                  debugPrint(filePath);
-                  File(filePath!).delete();
-                  debugPrint("Deleted $filePath");
-                },
-              ),
-            _buildText(),
-            // Text(recordDuration),
-            // FlowShader(
-            //   child: const Text("Tap lock to stop"),
-            //   duration: const Duration(seconds: 3),
-            //   flowColors: const [Colors.white, Colors.grey],
-            // ),
-            const SizedBox(width: 10),
-            _buildPauseResumeControl(),
-            const SizedBox(width: 10),
-
-            IconButton(
-              icon: const FaIcon(
-                FontAwesomeIcons.lock,
-                size: 18,
-                color: Colors.green,
-              ),
-              onPressed: () async {
-                setState(() {
-                  _recordState == RecordState.stop;
-                  isLocked = false;
-                });
-                if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
-                  Vibrate.feedback(FeedbackType.success);
-                }
-                final filePath = await _stop();
-                if (filePath == null) {
-                  return;
-                }
-                Globals.client = http.Client();
-                AudioState.allAudioFiles.myFiles
-                    .add(MyFileStatus(SyncStatus.localSyncing, filePath));
-                Globals.audioListKey.currentState!
-                    .insertItem(AudioState.allAudioFiles.all.length - 1);
-                final dd = await AzureBlobAbstract.uploadAudioWavToAzure(
-                    filePath,
-                    Globals.azureMyFilesPath + '/' + filePath.nameOnly,
-                    Globals.client);
-                if (dd == true) {
-                  Globals.client.close();
-                  final index = AudioState.allAudioFiles.myFiles.indexWhere(
-                      (e) =>
-                          e.uploadStatus == SyncStatus.localSyncing &&
-                          e.filePath == filePath);
-                  AudioState.allAudioFiles.myFiles[index] =
-                      MyFileStatus(SyncStatus.synced, filePath);
-                  Globals.audioListKey.currentState!.setState(() {});
-                }
-                debugPrint(filePath);
-              },
+            _buildTimerText(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                _buildDeleteButton(),
+                _buildPauseResumeControl(),
+                _buildUploadButton(),
+              ],
             ),
           ],
         ),
       ),
-      //),
     );
   }
+
+  Widget _buildUploadButton() => IconButton(
+        icon: const Icon(Icons.upload, color: Colors.lightBlueAccent),
+        onPressed: () async {
+          setState(() {
+            _recordState == RecordState.stop;
+            isLocked = false;
+          });
+          if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+            Vibrate.feedback(FeedbackType.success);
+          }
+          final filePath = await _stop();
+          if (filePath == null) {
+            return;
+          }
+          Globals.client = http.Client();
+          AudioState.allAudioFiles.myFiles
+              .add(MyFileStatus(SyncStatus.localSyncing, filePath));
+          Globals.audioListKey.currentState!
+              .insertItem(AudioState.allAudioFiles.all.length - 1);
+          final dd = await AzureBlobAbstract.uploadAudioWavToAzure(
+              filePath,
+              Globals.azureMyFilesPath + '/' + filePath.nameOnly,
+              Globals.client);
+          if (dd == true) {
+            Globals.client.close();
+            final index = AudioState.allAudioFiles.myFiles.indexWhere((e) =>
+                e.uploadStatus == SyncStatus.localSyncing &&
+                e.filePath == filePath);
+            AudioState.allAudioFiles.myFiles[index] =
+                MyFileStatus(SyncStatus.synced, filePath);
+            Globals.audioListKey.currentState!.setState(() {});
+          }
+          debugPrint(filePath);
+        },
+      );
+
+  Widget _buildDeleteButton() => GestureDetector(
+        child: const Icon(
+          Icons.delete,
+          size: 22,
+          color: Colors.grey,
+        ),
+        onLongPress: () async {
+          setState(() {
+            _recordState == RecordState.stop;
+            isLocked = false;
+            showLottie = true;
+          });
+          if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+            Vibrate.feedback(FeedbackType.heavy);
+          }
+          var filePath = await _stop();
+          debugPrint(filePath);
+          File(filePath!).delete();
+          debugPrint("Deleted $filePath");
+        },
+      );
 
   Widget _buildPauseResumeControl() {
     if (_recordState == RecordState.stop) {
@@ -424,13 +416,14 @@ class _RecorderMobileViewState extends State<RecorderMobileView> {
     late Icon icon;
     late Color color;
 
+    // ** more like whatsapp
+    final theme = Theme.of(context);
     if (_recordState == RecordState.record) {
-      icon = const Icon(Icons.pause, color: Colors.white, size: 18);
-      color = Colors.blue.withOpacity(0.6);
+      icon = const Icon(Icons.pause, color: Colors.red, size: 22);
+      color = theme.primaryColor.withOpacity(0.8);
     } else {
-      final theme = Theme.of(context);
-      icon = const Icon(Icons.mic, color: Colors.white, size: 18);
-      color = theme.primaryColor.withOpacity(0.5);
+      icon = const Icon(Icons.pause, color: Colors.red, size: 22);
+      color = theme.primaryColor.withOpacity(0.2);
     }
 
     return ClipOval(

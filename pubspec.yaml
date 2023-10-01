@@ -1,6 +1,6 @@
 name: vocal_message
 description: send and receive vocal messages through azure blob
-version: 1.0.0+1
+version: 0.0.1+1
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 environment:
@@ -31,10 +31,4 @@ dev_dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  flutter_lints: ^1.0.0
-
-flutter:
-  assets:
-    - assets/dustbin.json
-    - assets/dustbin_grey.json
-  
+  flutter_lints: ^1.0.0 

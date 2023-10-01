@@ -12,6 +12,10 @@ abstract class AzureBlobAbstract {
 
   static Future<List<AzureAudioFileParser>> fetchRemoteAudioFilesInfo(
       String folderPath, http.Client client) async {
+    if (_connectionString.isEmpty) {
+      debugPrint('Azure _connectionString isEmpty');
+      return [];
+    }
     final storage = AzureStorage.parse(_connectionString);
 
     try {

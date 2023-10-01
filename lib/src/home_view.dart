@@ -128,7 +128,13 @@ class _VocalMessagesAndRecorderViewState
             Padding(
               padding: const EdgeInsets.all(22.0),
               child: (!kIsWeb && (Platform.isAndroid || Platform.isIOS))
-                  ? RecorderMobileView(controller: controller)
+                  ? Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        RecorderMobileView(controller: controller),
+                      ],
+                    )
                   : const RecorderDesktopFrame(),
             ),
             const SizedBox(height: 12)

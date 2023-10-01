@@ -25,11 +25,11 @@ class AudioBubble<F extends FileSyncStatus> extends StatelessWidget {
       child: Row(
         children: [
           if (fileSyncStatus is MyFileStatus)
-            SizedBox(width: MediaQuery.of(context).size.width * 0.4),
+            SizedBox(width: MediaQuery.of(context).size.width * 0.2),
           Expanded(
             child: Container(
-              height: 45,
-              padding: const EdgeInsets.only(left: 12, right: 18),
+              height: 52,
+              padding: const EdgeInsets.only(left: 10, right: 10),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(Globals.borderRadius - 10),
                 color: fileSyncStatus is MyFileStatus
@@ -41,7 +41,7 @@ class AudioBubble<F extends FileSyncStatus> extends StatelessWidget {
             ),
           ),
           if (fileSyncStatus is TheirFileStatus)
-            SizedBox(width: MediaQuery.of(context).size.width * 0.4),
+            SizedBox(width: MediaQuery.of(context).size.width * 0.2),
         ],
       ),
     );
@@ -241,7 +241,7 @@ class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
                   }
                 },
               ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 6),
             if (widget.fileSyncStatus.status == SyncStatus.remoteSyncing ||
                 widget.fileSyncStatus.status == SyncStatus.remoteNotSynced)
               Expanded(
@@ -256,7 +256,6 @@ class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
                         color: Colors.grey,
                       ),
                     ),
-                    const SizedBox(),
                     Text(
                       dateTimeFormatter
                           .format(widget.fileSyncStatus.dateLastModif),

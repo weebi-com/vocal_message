@@ -1,5 +1,15 @@
 > voc'up
 
+# introducing
+A package to sync vocal message to azure. It can also :
+
+- handle audio file download
+- allow user to cancel download/upload
+- when offline files can still be played/recorded
+- handle unsent files and allow user to send them later
+- provides a ready to use example called voc'up
+
+
 # set-up & documentation 
 - create azure blob
 - create container in azure blob
@@ -29,13 +39,19 @@
 - add more languages in locals to make this universal
 
 ## niceToHave 
-- UX - display syncing progress
+- UI - display syncing progress
 - UI - while playing display audio waves 
   - I tried [voice_message_package](https://pub.dev/packages/voice_message_package) but it yielded unsatisfying result
     - see in for_later/amplitude.dart
 - UI - while recording display audio amplitude using a [gauge chart](https://github.com/GeekyAnts/GaugesFlutter)
 - UX - set a max duration to prevent users from uploading endless empty files
-- codeCourtesy - stick to audioplayers instead of just_audio + audioplayers
+- UX - while playing be able to move audio cursor
+- codeCourtesy - stick to audioplayers instead of just_audio + audioplayers ?
+- codeCourtesy - integrate icon files directly in lib
+
+- provide optionnal params to set in azure :
+	- <Content-Encoding />
+	- <Content-Language />
 
 # disclaimer
 - I kept the supa cool effect tap-release animation on mobile, but twisted it to remove chat
@@ -43,12 +59,27 @@
 - I also used recorder example for desktop, which is easier with a mouse
 - lot of code duplication there but the goal was to provide sync quickly
 
-# build reminders
+# build helpers
+> in pubspec add and also add them in your own assets
+assets:
+    - assets/dustbin.json
+    - assets/dustbin_grey.json
 ## android 
-> manifest
+> build.gradle
+minSdkVersion 21
+ 
+> in manifest add
+<uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 <uses-permission android:name="android.permission.RECORD_AUDIO" />
 <uses-permission android:name="android.permission.VIBRATE" />
 
+> ([to avoid error "No signature of method:"](https://stackoverflow.com/questions/76067863/no-signature-of-method-in-flutter-project))
+> in .pub-cache/hosted/pub.dev/audioplayers_android-3.0.2/android/build.gradle
+> comment line 48-50 
+    //lint {
+    //    disable 'InvalidPackage'
+    //}
 ## ios
 > Runner.entitlements
 <key>com.apple.security.device.audio-input</key>
