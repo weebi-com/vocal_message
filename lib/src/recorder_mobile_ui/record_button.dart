@@ -15,9 +15,9 @@ import 'package:record/record.dart';
 import 'package:http/http.dart' as http;
 
 class RecorderMobileView extends StatefulWidget {
-  final AnimationController controller;
+  // final AnimationController controller;
   const RecorderMobileView({
-    required this.controller,
+    // required this.controller,
     Key? key,
   }) : super(key: key);
 
@@ -25,7 +25,10 @@ class RecorderMobileView extends StatefulWidget {
   State<RecorderMobileView> createState() => _RecorderMobileViewState();
 }
 
-class _RecorderMobileViewState extends State<RecorderMobileView> {
+class _RecorderMobileViewState extends State<RecorderMobileView>
+    with SingleTickerProviderStateMixin {
+  late AnimationController controller;
+
   static const double size = 50;
 
   final double lockerHeight = 200;
@@ -51,13 +54,18 @@ class _RecorderMobileViewState extends State<RecorderMobileView> {
   @override
   void initState() {
     super.initState();
+    controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+
     buttonScaleAnimation = Tween<double>(begin: 1, end: 2).animate(
       CurvedAnimation(
-        parent: widget.controller,
+        parent: controller,
         curve: const Interval(0.0, 0.6, curve: Curves.elasticInOut),
       ),
     );
-    widget.controller.addListener(() {
+    controller.addListener(() {
       setState(() {});
     });
 
@@ -85,7 +93,7 @@ class _RecorderMobileViewState extends State<RecorderMobileView> {
             begin: (cancelTimerWidth) + Globals.defaultPadding, end: 0)
         .animate(
       CurvedAnimation(
-        parent: widget.controller,
+        parent: controller,
         curve: const Interval(0.2, 1, curve: Curves.easeIn),
       ),
     );
@@ -93,7 +101,7 @@ class _RecorderMobileViewState extends State<RecorderMobileView> {
         Tween<double>(begin: lockerHeight + Globals.defaultPadding, end: 0)
             .animate(
       CurvedAnimation(
-        parent: widget.controller,
+        parent: controller,
         curve: const Interval(0.2, 1, curve: Curves.easeIn),
       ),
     );
@@ -101,6 +109,7 @@ class _RecorderMobileViewState extends State<RecorderMobileView> {
 
   @override
   void dispose() {
+    controller.dispose();
 // FROM recorder
     _timer?.cancel();
     _recordSub?.cancel();
@@ -461,7 +470,7 @@ class _RecorderMobileViewState extends State<RecorderMobileView> {
       ),
       onLongPressDown: (_) {
         debugPrint("onLongPressDown");
-        widget.controller.forward();
+        controller.forward();
       },
       onLongPressEnd: (details) async {
         debugPrint("onLongPressEnd");
@@ -476,7 +485,7 @@ class _RecorderMobileViewState extends State<RecorderMobileView> {
           });
 
           Timer(const Duration(milliseconds: 1440), () async {
-            widget.controller.reverse();
+            controller.reverse();
             debugPrint("Cancelled recording");
             var filePath = await _stop();
             debugPrint(filePath);
@@ -485,7 +494,7 @@ class _RecorderMobileViewState extends State<RecorderMobileView> {
             showLottie = false;
           });
         } else if (checkIsLocked(details.localPosition)) {
-          widget.controller.reverse();
+          controller.reverse();
           if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
             Vibrate.feedback(FeedbackType.heavy);
           }
@@ -495,7 +504,7 @@ class _RecorderMobileViewState extends State<RecorderMobileView> {
             isLocked = true;
           });
         } else {
-          widget.controller.reverse();
+          controller.reverse();
           if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
             Vibrate.feedback(FeedbackType.success);
           }
@@ -526,7 +535,7 @@ class _RecorderMobileViewState extends State<RecorderMobileView> {
       },
       onLongPressCancel: () {
         debugPrint("onLongPressCancel");
-        widget.controller.reverse();
+        controller.reverse();
       },
       onLongPress: () async {
         debugPrint("onLongPress");

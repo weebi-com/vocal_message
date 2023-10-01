@@ -1,14 +1,19 @@
-> voc'up
+A package to sync vocal message to azure.
 
-# introducing
-A package to sync vocal message to azure. It can also :
-
-- handle audio file download
+# features
+- record audio and upload it to azure
+- download audio replies from azure 
 - allow user to cancel download/upload
-- when offline files can still be played/recorded
+- audio can be played/recorded when offline
 - handle unsent files and allow user to send them later
-- provides a ready to use example called voc'up
 
+# motivation
+Lower the barrier for voice-based services.
+
+# roadmap
+- Add a back-office app to keep track of all vocals and to reply with ease
+- Provide an AI speech-to-text model to support rollout of voice-based services in remote rural areas
+- outside of scope : chat_box / chatting
 
 # set-up & documentation 
 - create azure blob
@@ -27,18 +32,16 @@ A package to sync vocal message to azure. It can also :
 
 - toCheck : if one knows the user folderName, is it possible to create it manually to init voice messaging ?
 
-# roadmap
-- nextMilestone : provide a back-office app to ease keeping track of messages received and replies
-- nextPotentialMilestone : handle other types of files, such as __contacts__, photos and position
-- outside of scope : chat_box / chatting
-
 # backlog
 ## support needed
 - split UI and logic to make it easier to integrate the package within exiting code
 - split azure from UI to make it possible to use other cloud providers
 - add more languages in locals to make this universal
+- handle other types of files, such as __contacts__, photos and position
+- check performance for x100 files and update accordingly
 
 ## niceToHave 
+- UI - use bin animation when deleting from mobile lockTimer
 - UI - display syncing progress
 - UI - while playing display audio waves 
   - I tried [voice_message_package](https://pub.dev/packages/voice_message_package) but it yielded unsatisfying result

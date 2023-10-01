@@ -4,6 +4,7 @@ import 'dart:developer' as developer;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/services.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:record/record.dart';
 import 'package:vocal_message/src/messages_ui/audio_list.dart';
 import 'package:vocal_message/src/audio_state.dart';
 import 'package:vocal_message/src/globals.dart';
@@ -25,8 +26,6 @@ class VocalMessagesAndRecorderView extends StatefulWidget {
 class _VocalMessagesAndRecorderViewState
     extends State<VocalMessagesAndRecorderView>
     with SingleTickerProviderStateMixin {
-  late AnimationController controller;
-
   bool isDeviceConnected = false;
   bool isSyncing = false;
   final Connectivity _connectivity = Connectivity();
@@ -35,11 +34,6 @@ class _VocalMessagesAndRecorderViewState
   @override
   void initState() {
     super.initState();
-    controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 600),
-    );
-
     initConnectivity();
 
     _connectivitySubscription = _connectivity.onConnectivityChanged
@@ -51,7 +45,6 @@ class _VocalMessagesAndRecorderViewState
 
   @override
   void dispose() {
-    controller.dispose();
     _connectivitySubscription.cancel();
     super.dispose();
   }
@@ -125,22 +118,55 @@ class _VocalMessagesAndRecorderViewState
               color: Theme.of(context).primaryColor.withOpacity(0.8),
               height: 8,
             ),
-            Padding(
-              padding: const EdgeInsets.all(22.0),
-              child: (!kIsWeb && (Platform.isAndroid || Platform.isIOS))
-                  ? Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        RecorderMobileView(controller: controller),
-                      ],
-                    )
-                  : const RecorderDesktopFrame(),
-            ),
-            const SizedBox(height: 12)
+            const SizedBox(height: 12),
+            const RecorderFrame(),
           ],
         ),
       ),
     );
+  }
+}
+
+class RecorderFrame extends StatelessWidget {
+  const RecorderFrame({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<bool>(
+        future: AudioRecorder()
+            .hasPermission(), // check it before displaying button otherwise weird behaviour first time
+        builder: (_, snap) {
+          if (snap.connectionState == ConnectionState.waiting) {
+            return SizedBox(
+                width: MediaQuery.of(context).size.width * 0.5,
+                child: const CircularProgressIndicator());
+          } else if (snap.hasError) {
+            debugPrint('${snap.error}');
+            return ColoredBox(
+                color: Colors.pink,
+                child: Text('audio permission error ${snap.error}'));
+          } else if (snap.connectionState != ConnectionState.waiting &&
+              !snap.hasData) {
+            return const ColoredBox(
+                color: Colors.purple, child: Text('no audio permission data'));
+          } else if (snap.data == null) {
+            return const ColoredBox(
+                color: Colors.blue, child: Text('audio permission  null'));
+          } else {
+            return Padding(
+              padding: const EdgeInsets.all(22.0),
+              child: (!kIsWeb && (Platform.isAndroid || Platform.isIOS))
+                  ? Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment:
+                          MainAxisAlignment.end, // keep mic button on the right
+                      children: const [
+                        RecorderMobileView(),
+                      ],
+                    )
+                  : const RecorderDesktopFrame(),
+            );
+          }
+        });
   }
 }
