@@ -40,7 +40,9 @@ Lower the barrier for voice-based services.
 - handle other types of files, such as __contacts__, photos and position
 - check performance for x100 files and update accordingly
 
-## niceToHave 
+## niceToHave
+- publish on pub.dev (migrating to sdk 3.0 for (recorder))
+- notification 
 - UI - use bin animation when deleting from mobile lockTimer
 - UI - display syncing progress
 - UI - while playing display audio waves 
@@ -91,10 +93,16 @@ minSdkVersion 21
 <true/>
 <key>com.apple.security.files.downloads.read-write</key>
 
+> info.plist
+NSMicrophoneUsageDescription
+
 ## macos 
 > podfile
 platform :osx, '10.15'
 
+
+> info.plist
+> 
 > macos/Runner/Release.entitlements
 <key>com.apple.security.device.audio-input</key>
 <true/>

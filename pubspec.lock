@@ -473,8 +473,8 @@ packages:
     dependency: "direct main"
     description:
       path: record
-      ref: "24663365be67494dcd95cd4e3ccb4e62e56eff69"
-      resolved-ref: "24663365be67494dcd95cd4e3ccb4e62e56eff69"
+      ref: "6776acc2098f4087767b5e73b996c9889e80cf90"
+      resolved-ref: "6776acc2098f4087767b5e73b996c9889e80cf90"
       url: "https://github.com/flutter-painter/record"
     source: git
     version: "5.0.0-beta.2"
@@ -490,10 +490,10 @@ packages:
     dependency: transitive
     description:
       name: record_darwin
-      sha256: "9bedfcdb9ab0c6c4b41f7da6fb95a392ffb545eafb28e7ddbef9d85deb540f3b"
+      sha256: "07f31e531d9b12797a1b9749e290daa8c4a5e17145ec09f655cbf97814a36c5a"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.0-beta.2+2"
+    version: "1.0.0-beta.2+3"
   record_platform_interface:
     dependency: transitive
     description:

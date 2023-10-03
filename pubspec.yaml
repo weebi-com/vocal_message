@@ -1,7 +1,7 @@
 name: vocal_message
-description: send and receive vocal messages through azure blob
+description: record vocals, upload them on azure blob and download replies
 version: 0.0.1+1
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+repository: https://github.com/weebi-com/vocal_message
 
 environment:
   sdk: ">=2.17.0 <4.0.0"
@@ -18,7 +18,7 @@ dependencies:
     git: 
       url: https://github.com/flutter-painter/record
       path: record
-      ref: 24663365be67494dcd95cd4e3ccb4e62e56eff69
+      ref: 6776acc2098f4087767b5e73b996c9889e80cf90
   flutter_vibrate: ^1.1.0
   lottie: ^1.2.1
   xml: ^6.2.2
