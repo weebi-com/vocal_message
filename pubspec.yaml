@@ -15,10 +15,11 @@ dependencies:
   font_awesome_flutter: ^10.1.0
   permission_handler: ^10.0.0 #^8.1.6
   record: #5.0.0-beta.3 depends on record_web which depends on sdk >= 3
-    git: 
-      url: https://github.com/flutter-painter/record
-      path: record
-      ref: 6776acc2098f4087767b5e73b996c9889e80cf90
+    path: ../record/record
+    #git: 
+    #  url: https://github.com/flutter-painter/record
+    #  path: record
+    #  ref: 6776acc2098f4087767b5e73b996c9889e80cf90
   flutter_vibrate: ^1.1.0
   lottie: ^1.2.1
   xml: ^6.2.2

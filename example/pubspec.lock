@@ -472,11 +472,9 @@ packages:
   record:
     dependency: transitive
     description:
-      path: record
-      ref: "6776acc2098f4087767b5e73b996c9889e80cf90"
-      resolved-ref: "6776acc2098f4087767b5e73b996c9889e80cf90"
-      url: "https://github.com/flutter-painter/record"
-    source: git
+      path: "../../record/record"
+      relative: true
+    source: path
     version: "5.0.0-beta.2"
   record_android:
     dependency: transitive

@@ -104,9 +104,11 @@ class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
   Future<Uint8List> _downloadFromAzure() async {
     // here close Globals.client if needed
     Globals.client = http.Client();
-    final audio = await AzureBlobAbstract.downloadAudioFromAzure(
-        Globals.azureMyFilesPath + '/' + widget.fileSyncStatus.filePath,
-        Globals.client);
+    final path =
+        Globals.azureMyFilesPath + '/' + widget.fileSyncStatus.filePath;
+    print('path $path');
+    final audio =
+        await AzureBlobAbstract.downloadAudioFromAzure(path, Globals.client);
     return audio;
   }
 
@@ -120,6 +122,7 @@ class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
       debugPrint('user interrupted download');
       return;
     }
+    print('uint8List.lengthInBytes ${uint8List.lengthInBytes}');
     setState(() {
       widget.fileSyncStatus = (widget.fileSyncStatus as TheirFileStatus)
           .copyWith(downloadStatus: SyncStatus.synced);
