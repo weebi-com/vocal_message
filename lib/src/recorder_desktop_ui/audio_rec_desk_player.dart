@@ -111,8 +111,10 @@ class AudioRecPlayerState extends State<AudioRecPlayer> {
                       Globals.client = http.Client();
                       AudioState.allAudioFiles.myFiles.add(
                           MyFileStatus(SyncStatus.localSyncing, widget.source));
-                      Globals.audioListKey.currentState!
-                          .insertItem(AudioState.allAudioFiles.all.length - 1);
+                      if (Globals.audioListKey.currentState != null) {
+                        Globals.audioListKey.currentState!.insertItem(
+                            AudioState.allAudioFiles.all.length - 1);
+                      }
                       final dd = await AzureBlobAbstract.uploadAudioWavToAzure(
                           widget.source,
                           Globals.azureMyFilesPath +

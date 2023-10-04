@@ -47,3 +47,5 @@ app.*.map.json
 lib/example/const.dart
 pubspec.lock
 example/pubspec.lock
+test/secret.dart
+example/lib/secret.dart

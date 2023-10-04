@@ -14,6 +14,7 @@ abstract class Globals {
   static late http.Client client;
   static String locale = 'fr';
   static String documentPath = '';
+  static String androidExtStorage = '';
   static void setDocumentPath(Directory dir) {
     documentPath = dir.path;
     if (theirFilesDir.existsSync() == false) {

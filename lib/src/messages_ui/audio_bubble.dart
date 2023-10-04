@@ -3,7 +3,10 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:android_intent_plus/android_intent.dart';
+import 'package:external_path/external_path.dart';
 import 'package:intl/intl.dart' as intl;
+import 'package:vocal_message/logic.dart';
 import 'package:vocal_message/src/azure_blob/azblob_abstract.dart';
 import 'package:vocal_message/src/file_status.dart';
 import 'package:vocal_message/src/globals.dart';
@@ -77,6 +80,7 @@ class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
       if ((widget.fileSyncStatus as TheirFileStatus).localPathFull.isNotEmpty) {
         final localPathFull =
             (widget.fileSyncStatus as TheirFileStatus).localPathFull;
+
         player.setFilePath(localPathFull).then((value) {
           if (mounted) {
             setState(() => duration = value);
@@ -101,57 +105,22 @@ class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
     return '$d Mo';
   }
 
-  Future<Uint8List> _downloadFromAzure() async {
-    // here close Globals.client if needed
-    Globals.client = http.Client();
-    final audio = await AzureBlobAbstract.downloadAudioFromAzure(
-        Globals.azureMyFilesPath + '/' + widget.fileSyncStatus.filePath,
-        Globals.client);
-    return audio;
-  }
-
-  Future<void> downloadAndSaveFile() async {
+  Future<Uint8List> _downloadFile() async {
     setState(() {
       widget.fileSyncStatus = (widget.fileSyncStatus as TheirFileStatus)
           .copyWith(downloadStatus: SyncStatus.remoteSyncing);
     });
-    final uint8List = await _downloadFromAzure();
+    Globals.client = http.Client();
+
+    final uint8List = await AzureBlobAbstract.downloadAudioFromAzure(
+        Globals.azureMyFilesPath + '/' + widget.fileSyncStatus.filePath,
+        Globals.client);
+
     if (uint8List.isEmpty) {
       debugPrint('user interrupted download');
-      return;
+      return Uint8List.fromList([]);
     }
-    setState(() {
-      widget.fileSyncStatus = (widget.fileSyncStatus as TheirFileStatus)
-          .copyWith(downloadStatus: SyncStatus.synced);
-    });
-    //
-    Globals.client.close();
-    //
-    final temp = (widget.fileSyncStatus as TheirFileStatus).localPathFull;
-    if (temp.isEmpty) {
-      debugPrint('widget.fileSyncStatus.localPathFull is empty');
-      return;
-    }
-    try {
-      // await save(temp, uint8List);
-      await File(temp).writeAsBytes(uint8List);
-      // save(temp, uint8List);
-      debugPrint('save file success in $temp');
-
-      player
-          .setFilePath((widget.fileSyncStatus as TheirFileStatus).localPathFull)
-          .then((value) {
-        setState(() {
-          duration = value;
-        });
-      });
-    } on FileSystemException catch (e) {
-      debugPrint('save file exception $e');
-      setState(() {
-        widget.fileSyncStatus = (widget.fileSyncStatus as TheirFileStatus)
-            .copyWith(downloadStatus: SyncStatus.remoteNotSynced);
-      });
-    }
+    return uint8List;
   }
 
   Future<void> upload() async {
@@ -181,13 +150,101 @@ class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        // IconButton(
+        //   icon: Icon(Icons.ac_unit, size: 6),
+        //   onPressed: () async {
+        //     if (Platform.isAndroid) {
+        //       final ext = await getExtStoragePathAndroid();
+        //       if (ext.isNotEmpty) {
+        //         final can = await canReadExtStorage();
+
+        //         print('can $can');
+        //         print('ext $ext');
+        //         Globals.androidExtStorage = ext;
+        //       }
+        //     }
+        //   },
+        // ),
         const SizedBox(height: 4),
         Row(
           children: [
             if (widget.fileSyncStatus.status == SyncStatus.remoteNotSynced)
               IconButton(
                 icon: const Icon(Icons.download),
-                onPressed: () async => downloadAndSaveFile(),
+                onPressed: () async {
+                  final audioContent = await _downloadFile();
+                  if (audioContent.isEmpty) {
+                    return;
+                  }
+                  if (Platform.isAndroid == false) {
+                    try {
+                      final temp = (widget.fileSyncStatus as TheirFileStatus)
+                          .filePath
+                          .nameOnly
+                          .localPathFull;
+                      if (temp.isEmpty) {
+                        debugPrint(
+                            'widget.fileSyncStatus.localPathFull is empty');
+                        return;
+                      }
+                      final temp2 = await File(temp).writeAsBytes(audioContent);
+                      final contentLength = await temp2.length();
+                      print('downloaded contentLength $contentLength');
+                      Globals.client.close();
+                      print('Globals.client.closed');
+                      if (temp2.path.isNotEmpty) {
+                        debugPrint('save file success in $temp');
+                        player
+                            .setFilePath(
+                                (widget.fileSyncStatus as TheirFileStatus)
+                                    .localPathFull)
+                            .then((value) {
+                          setState(() {
+                            duration = value;
+                            widget.fileSyncStatus = (widget.fileSyncStatus
+                                    as TheirFileStatus)
+                                .copyWith(downloadStatus: SyncStatus.synced);
+                          });
+                        });
+                      }
+                    } on FileSystemException catch (e) {
+                      debugPrint('save file exception $e');
+                      setState(() {
+                        widget.fileSyncStatus =
+                            (widget.fileSyncStatus as TheirFileStatus).copyWith(
+                                downloadStatus: SyncStatus.remoteNotSynced);
+                      });
+                    }
+                  } else {
+                    print('entering android');
+                    final ext =
+                        await ExternalPath.getExternalStoragePublicDirectory(
+                            ExternalPath.DIRECTORY_DOWNLOADS);
+                    if (ext.isEmpty) {
+                      throw 'unknown storage';
+                    }
+                    final canRead = await canReadStorage();
+                    if (canRead == false) {
+                      throw 'cannot read storage';
+                    }
+                    final androidPath =
+                        ext + '/' + widget.fileSyncStatus.filePath;
+                    print('DOOOOOOOOOOOO');
+                    print('androidPath $androidPath');
+                    final temp2 =
+                        await File(androidPath).writeAsBytes(audioContent);
+                    if (temp2.path.isNotEmpty) {
+                      debugPrint('save file success in $temp2');
+
+                      setState(() {
+                        // duration = value;
+                        widget.fileSyncStatus =
+                            (widget.fileSyncStatus as TheirFileStatus)
+                                .copyWith(downloadStatus: SyncStatus.synced);
+                      });
+                    }
+                  }
+                },
               )
             else if (widget.fileSyncStatus.status == SyncStatus.remoteSyncing)
               GestureDetector(
@@ -215,6 +272,16 @@ class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
                   final playerState = snapshot.data;
                   final processingState = playerState?.processingState;
                   final playing = playerState?.playing;
+                  if (Platform.isAndroid) {
+                    final uri = Uri.file(
+                        '/storage/emulated/0/Download/audio1696370733448.wav');
+                    const AndroidIntent intent = AndroidIntent(
+                      action: 'action_view',
+                      data:
+                          '/storage/emulated/0/Download/audio1696370733448.wav',
+                    );
+                    // intent.launch();
+                  }
                   if (processingState == ProcessingState.loading ||
                       processingState == ProcessingState.buffering) {
                     return IconButton(

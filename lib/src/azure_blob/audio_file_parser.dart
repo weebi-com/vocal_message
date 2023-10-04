@@ -39,7 +39,7 @@ class AzureAudioFileParser {
           int.parse(properties.findElements('Content-Length').first.text);
       final type = properties.findElements('Content-Type').first.text;
       if (path.isNotEmpty) {
-        if (type == 'audio/wav' || type == 'audio/x-wav') {
+        if (type.contains('audio')) {
           final fileAzure =
               AzureAudioFileParser(path, creationTime, contentLength);
           filesAzure.add(fileAzure);
