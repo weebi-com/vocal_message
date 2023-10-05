@@ -1,6 +1,6 @@
-import 'package:vocal_message/src/audio_state.dart';
+import 'package:vocal_message/src/messages/audio_state.dart';
 import 'package:vocal_message/src/globals.dart';
-import 'package:vocal_message/src/messages_ui/audio_bubble.dart';
+import 'package:vocal_message/src/messages/audio_bubble.dart';
 import 'package:flutter/material.dart';
 
 typedef FutureGenerator = Future<AllAudioFiles> Function();

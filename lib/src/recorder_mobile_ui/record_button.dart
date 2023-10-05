@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:vocal_message/src/azure_blob/azblob_abstract.dart';
 import 'package:vocal_message/src/file_status.dart';
 import 'package:path/path.dart' as p;
-import 'package:vocal_message/src/audio_state.dart';
+import 'package:vocal_message/src/messages/audio_state.dart';
 import 'package:vocal_message/src/globals.dart';
 import 'package:vocal_message/src/recorder_mobile_ui/flow_shader.dart';
 import 'package:vocal_message/src/recorder_mobile_ui/lottie_animation.dart';
@@ -380,7 +380,7 @@ class _RecorderMobileViewState extends State<RecorderMobileView>
               .insertItem(AudioState.allAudioFiles.all.length - 1);
           final dd = await AzureBlobAbstract.uploadAudioWavToAzure(
               filePath,
-              Globals.azureMyFilesPath + '/' + filePath.nameOnly,
+              Globals.azureConfig.myFilesPath + '/' + filePath.nameOnly,
               Globals.client);
           if (dd == true) {
             Globals.client.close();
@@ -519,7 +519,7 @@ class _RecorderMobileViewState extends State<RecorderMobileView>
               .insertItem(AudioState.allAudioFiles.all.length - 1);
           final dd = await AzureBlobAbstract.uploadAudioWavToAzure(
               filePath,
-              Globals.azureMyFilesPath + '/' + filePath.nameOnly,
+              Globals.azureConfig.myFilesPath + '/' + filePath.nameOnly,
               Globals.client);
           if (dd == true) {
             Globals.client.close();

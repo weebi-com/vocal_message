@@ -1,5 +1,4 @@
 class AzureAudioConfig {
-  late String connectionString;
   late String containerName;
   late String userFolderName;
 
@@ -14,10 +13,10 @@ class AzureAudioConfig {
     return _inst;
   }
 
-  String get azureRootPath => '/' + containerName + '/' + userFolderName;
-  String get azureMyFilesPath =>
+  String get rootPath => '/' + containerName + '/' + userFolderName;
+  String get myFilesPath =>
       '/' + containerName + '/' + userFolderName + '/uploads';
 
-  String get azureTheirFilesPath =>
+  String get theirFilesPath =>
       '/' + containerName + '/' + userFolderName + '/downloads';
 }

@@ -8,6 +8,7 @@ enum SyncStatus {
   remoteSyncing,
   localSyncing,
   synced,
+  localDefective,
 }
 
 abstract class FileSyncStatus {
@@ -70,7 +71,7 @@ class TheirFileStatus implements FileSyncStatus {
   TheirFileStatus(
       this.downloadStatus, this.azurePath, this.creationTime, this.bytes);
   @override
-  DateTime get dateLastModif => creationTime ?? defaultDate;
+  DateTime get dateLastModif => (creationTime ?? defaultDate).toLocal();
 
   String get localPathFull {
     if (downloadStatus != SyncStatus.synced) {

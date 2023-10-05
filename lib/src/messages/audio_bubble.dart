@@ -3,7 +3,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:external_path/external_path.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:vocal_message/logic.dart';
 import 'package:vocal_message/src/azure_blob/azblob_abstract.dart';
@@ -103,7 +103,7 @@ class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
     return '$d Mo';
   }
 
-  Future<Uint8List> _downloadFile() async {
+  Future<Uint8List> _downloadTheirAudio() async {
     setState(() {
       widget.fileSyncStatus = (widget.fileSyncStatus as TheirFileStatus)
           .copyWith(downloadStatus: SyncStatus.remoteSyncing);
@@ -111,7 +111,10 @@ class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
     Globals.client = http.Client();
 
     final uint8List = await AzureBlobAbstract.downloadAudioFromAzure(
-        Globals.azureTheirFilesPath + '/' + widget.fileSyncStatus.filePath,
+        Globals.azureConfig
+                .theirFilesPath + // only makes sense to download audio from someone else
+            '/' +
+            widget.fileSyncStatus.filePath,
         Globals.client);
 
     if (uint8List.isEmpty) {
@@ -129,7 +132,7 @@ class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
     });
     final isUploadOk = await AzureBlobAbstract.uploadAudioWavToAzure(
         widget.fileSyncStatus.filePath,
-        Globals.azureMyFilesPath +
+        Globals.azureConfig.myFilesPath +
             '/' +
             widget.fileSyncStatus.filePath.nameOnly,
         Globals.client);
@@ -148,99 +151,60 @@ class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // IconButton(
-        //   icon: Icon(Icons.ac_unit, size: 6),
-        //   onPressed: () async {
-        //     if (Platform.isAndroid) {
-        //       final ext = await getExtStoragePathAndroid();
-        //       if (ext.isNotEmpty) {
-        //         final can = await canReadExtStorage();
-
-        //         print('can $can');
-        //         print('ext $ext');
-        //         Globals.androidExtStorage = ext;
-        //       }
-        //     }
-        //   },
-        // ),
         const SizedBox(height: 4),
         Row(
           children: [
+            if (widget.fileSyncStatus.status == SyncStatus.localDefective)
+              const Icon(Icons.broken_image, color: Colors.red),
             if (widget.fileSyncStatus.status == SyncStatus.remoteNotSynced)
               IconButton(
                 icon: const Icon(Icons.download),
                 onPressed: () async {
-                  final audioContent = await _downloadFile();
-                  if (audioContent.isEmpty) {
+                  final audioContent = await _downloadTheirAudio();
+                  if (audioContent.isEmpty ||
+                      audioContent.lengthInBytes < 250) {
                     return;
                   }
-                  if (Platform.isAndroid == false) {
-                    try {
-                      final temp = (widget.fileSyncStatus as TheirFileStatus)
-                          .filePath
-                          .nameOnly
-                          .localPathFull;
-                      if (temp.isEmpty) {
-                        debugPrint(
-                            'widget.fileSyncStatus.localPathFull is empty');
-                        return;
-                      }
-                      final temp2 = await File(temp).writeAsBytes(audioContent);
-                      final contentLength = await temp2.length();
-                      print('downloaded contentLength $contentLength');
-                      Globals.client.close();
-                      print('Globals.client.closed');
-                      if (temp2.path.isNotEmpty) {
-                        debugPrint('save file success in $temp');
-                        player
-                            .setFilePath(
-                                (widget.fileSyncStatus as TheirFileStatus)
-                                    .localPathFull)
-                            .then((value) {
-                          setState(() {
-                            duration = value;
-                            widget.fileSyncStatus = (widget.fileSyncStatus
-                                    as TheirFileStatus)
-                                .copyWith(downloadStatus: SyncStatus.synced);
-                          });
+                  final temp = (widget.fileSyncStatus as TheirFileStatus)
+                      .filePath
+                      .nameOnly
+                      .localPathFull;
+
+                  debugPrint('temp path :  $temp');
+                  if (temp.isEmpty) {
+                    return;
+                  }
+                  try {
+                    final temp2 = await File(temp).writeAsBytes(audioContent);
+                    // final contentLength = await temp2.length();
+                    Globals.client.close();
+                    if (temp2.path.isNotEmpty) {
+                      debugPrint('save file success in $temp');
+                      try {
+                        final path = await player.setFilePath(temp2.path);
+                        setState(() {
+                          duration = path;
+                          widget.fileSyncStatus =
+                              (widget.fileSyncStatus as TheirFileStatus)
+                                  .copyWith(downloadStatus: SyncStatus.synced);
+                        });
+                      } on PlayerException catch (e) {
+                        debugPrint('Source error $e');
+                        setState(() {
+                          widget.fileSyncStatus = (widget.fileSyncStatus
+                                  as TheirFileStatus)
+                              .copyWith(
+                                  downloadStatus: SyncStatus.localDefective);
                         });
                       }
-                    } on FileSystemException catch (e) {
-                      debugPrint('save file exception $e');
-                      setState(() {
-                        widget.fileSyncStatus =
-                            (widget.fileSyncStatus as TheirFileStatus).copyWith(
-                                downloadStatus: SyncStatus.remoteNotSynced);
-                      });
                     }
-                  } else {
-                    print('entering android');
-                    final ext =
-                        await ExternalPath.getExternalStoragePublicDirectory(
-                            ExternalPath.DIRECTORY_DOWNLOADS);
-                    if (ext.isEmpty) {
-                      throw 'unknown storage';
-                    }
-                    final canRead = await canReadStorage();
-                    if (canRead == false) {
-                      throw 'cannot read storage';
-                    }
-                    final androidPath =
-                        ext + '/' + widget.fileSyncStatus.filePath;
-                    print('DOOOOOOOOOOOO');
-                    print('androidPath $androidPath');
-                    final temp2 =
-                        await File(androidPath).writeAsBytes(audioContent);
-                    if (temp2.path.isNotEmpty) {
-                      debugPrint('save file success in $temp2');
-
-                      setState(() {
-                        // duration = value;
-                        widget.fileSyncStatus =
-                            (widget.fileSyncStatus as TheirFileStatus)
-                                .copyWith(downloadStatus: SyncStatus.synced);
-                      });
-                    }
+                  } on FileSystemException catch (e) {
+                    debugPrint('save file exception $e');
+                    setState(() {
+                      widget.fileSyncStatus = (widget.fileSyncStatus
+                              as TheirFileStatus)
+                          .copyWith(downloadStatus: SyncStatus.remoteNotSynced);
+                    });
                   }
                 },
               )
@@ -263,7 +227,7 @@ class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
                   ],
                 ),
               )
-            else
+            else if (widget.fileSyncStatus.status != SyncStatus.localDefective)
               StreamBuilder<PlayerState>(
                 stream: player.playerStateStream,
                 builder: (context, snapshot) {

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:vocal_message/src/file_status.dart';
-import 'package:vocal_message/src/audio_state.dart';
+import 'package:vocal_message/src/messages/audio_state.dart';
 import 'package:vocal_message/src/azure_blob/azblob_abstract.dart';
 import 'package:vocal_message/src/globals.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -117,7 +117,7 @@ class AudioRecPlayerState extends State<AudioRecPlayer> {
                       }
                       final dd = await AzureBlobAbstract.uploadAudioWavToAzure(
                           widget.source,
-                          Globals.azureMyFilesPath +
+                          Globals.azureConfig.myFilesPath +
                               '/' +
                               widget.source.nameOnly,
                           Globals.client);

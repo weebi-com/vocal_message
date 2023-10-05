@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:vocal_message/src/android_ext/android_ext_storage.dart';
 import 'package:vocal_message/src/azure_blob/audio_file_parser.dart';
 import 'package:vocal_message/src/azure_blob/azblob_abstract.dart';
 import 'package:vocal_message/src/globals.dart';
@@ -46,8 +47,18 @@ List<String> getOnlyTheirLocalAudioFiles() {
 
 Future<AllAudioFiles> getLocalAudioFetchFilesAndSetStatus(
     bool isConnected) async {
+  if (Platform.isAndroid) {
+    final areAvailable = areAndroidExtFoldersAvailable();
+    if (areAvailable == false) {
+      final isSetUp = setupAndroidExtFolders();
+      if (isSetUp == false) {
+        throw 'unable to setup Android Folders';
+      }
+    }
+  }
   if (isConnected) {
-    final allAudios = await fetchFilesAndSetStatus(Globals.azureRootPath);
+    final allAudios =
+        await fetchFilesAndSetStatus(Globals.azureConfig.rootPath);
     return allAudios;
   } else {
     return getLocalFilesAndStatusOnly();
@@ -76,7 +87,7 @@ Future<AllAudioFiles> fetchFilesAndSetStatus(String azurePath) async {
   final myFiles = <MyFileStatus>[];
   final theirFiles = <TheirFileStatus>[];
   final myRemoteFiles =
-      await fetchRemoteAudioFiles(Globals.azureMyFilesPath, client);
+      await fetchRemoteAudioFiles(Globals.azureConfig.myFilesPath, client);
   final myLocalFiles = getOnlyMyLocalAudioFiles();
   for (final localFile in myLocalFiles) {
     if (myRemoteFiles.filesNameOnly.contains(localFile.nameOnly)) {
@@ -96,7 +107,7 @@ Future<AllAudioFiles> fetchFilesAndSetStatus(String azurePath) async {
   final theirLocalFiles = getOnlyTheirLocalAudioFiles();
 
   final theirRemoteFiles =
-      await fetchRemoteAudioFiles(Globals.azureTheirFilesPath, client2);
+      await fetchRemoteAudioFiles(Globals.azureConfig.theirFilesPath, client2);
   debugPrint('theirRemoteFiles ${theirRemoteFiles.length}');
   for (final remoteFile in theirRemoteFiles) {
     if (theirLocalFiles.namesOnly.contains(remoteFile.fileName)) {

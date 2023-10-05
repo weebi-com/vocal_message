@@ -16,9 +16,11 @@ void main() async {
   // it looks like DefaultEndpointsProtocol=https;AccountName=...
   AzureBlobAbstract.setConnectionString(azureConn);
 
-  // set both the container use in azure blob and the user folder
+  // set the container used in azure blob and the user folder
   Globals.setAzureAudioConfig =
       AzureAudioConfig(containerName: 'audio-test', userFolderName: 'john_doe');
+
+  Globals.androidAudioName = 'Vocup_audio';
 
   runApp(const AppDocDirectory());
 }
