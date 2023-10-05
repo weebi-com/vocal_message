@@ -32,9 +32,15 @@ abstract class AzureBlobAbstract {
   static Future<Uint8List> downloadAudioFromAzure(
       String wavFileLink, http.Client client) async {
     final storage = AzureStorage.parse(_connectionString);
+
     try {
       final streamedResponse = await storage.getBlob(wavFileLink, client);
-      return await streamedResponse.stream.toBytes();
+      //await for await streamedResponse.stream.last
+      // final d = await streamedResponse.stream.toBytes();
+      // print('d.elementSizeInBytes ${d.elementSizeInBytes}');
+      //streamedResponse.stream.toBytes();
+      final response = await http.Response.fromStream(streamedResponse);
+      return response.bodyBytes;
     } on AzureStorageException catch (ex) {
       debugPrint('AzureStorageException ${ex.message}');
       return Uint8List.fromList([]);

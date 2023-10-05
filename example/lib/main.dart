@@ -19,7 +19,12 @@ void main() async {
   // set both the container use in azure blob and the user folder
   Globals.setAzureAudioConfig =
       AzureAudioConfig(containerName: 'audio-test', userFolderName: 'john_doe');
+
   runApp(const AppDocDirectory());
+}
+
+Future<Directory> dootheboogie() async {
+  return await getApplicationDocumentsDirectory();
 }
 
 class AppDocDirectory extends StatelessWidget {

@@ -10,7 +10,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  just_audio: ^0.9.11
+  external_path: ^1.0.3
+  android_intent_plus: ^4.0.2
+  just_audio: ^0.9.31  #0.9.11
   audioplayers: ^4.1.0 #^5.1.0 
   font_awesome_flutter: ^10.1.0
   permission_handler: ^10.0.0 #^8.1.6

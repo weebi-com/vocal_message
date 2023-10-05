@@ -82,6 +82,11 @@ class _VocalMessagesAndRecorderViewState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          File('/storage/emulated/0/Download/audio1696370733448.wav');
+        },
+      ),
       appBar: AppBar(
         title: Text(widget.title),
         actions: [

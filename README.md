@@ -48,6 +48,8 @@ Lower the barrier for voice-based services.
 - UI - while playing display audio waves 
   - I tried [voice_message_package](https://pub.dev/packages/voice_message_package) but it yielded unsatisfying result
     - see in for_later/amplitude.dart
+    - check : https://pub.dev/packages/audio_waveforms
+    - https://pub.dev/packages/flutter_audio_waveforms
 - UI - while recording display audio amplitude using a [gauge chart](https://github.com/GeekyAnts/GaugesFlutter)
 - UX - set a max duration to prevent users from uploading endless empty files
 - UX - while playing be able to move audio cursor
