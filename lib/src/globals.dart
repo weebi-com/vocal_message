@@ -28,7 +28,8 @@ abstract class Globals {
 
   static Directory get theirFilesDir {
     if (Platform.isAndroid) {
-      if (androidExtStorage.path.isNotEmpty && androidAudioName.isNotEmpty) {
+      if (androidExtStorage.path.isNotEmpty &&
+          config.androidAudioName.isNotEmpty) {
         return Directory(
             '${androidExtStorage.path}/${Globals.androidTheirAudioFolderName}');
       } else {
@@ -42,7 +43,8 @@ abstract class Globals {
 
   static Directory get myFilesDir {
     if (Platform.isAndroid) {
-      if (androidExtStorage.path.isNotEmpty && androidAudioName.isNotEmpty) {
+      if (androidExtStorage.path.isNotEmpty &&
+          config.androidAudioName.isNotEmpty) {
         return Directory(
             '${androidExtStorage.path}/${Globals.androidMyAudioFolderName}');
       } else {
@@ -63,13 +65,13 @@ abstract class Globals {
   static set setAndroidConfig(AndroidExtStorageSingleton val) =>
       _androidExtStorage = val;
   static AndroidExtStorageSingleton get androidExtStorage => _androidExtStorage;
-  static String androidAudioName = 'vocal_message';
-  static String get androidMyAudioFolderName => androidAudioName + '_my';
-  static String get androidTheirAudioFolderName => androidAudioName + '_their';
+  static String get androidMyAudioFolderName => config.androidAudioName + '_my';
+  static String get androidTheirAudioFolderName =>
+      config.androidAudioName + '_their';
 
-  static late AzureAudioConfig _config;
-  static set setAzureAudioConfig(AzureAudioConfig cg) => _config = cg;
-  static AzureAudioConfig get azureConfig => _config;
+  static late AppConfig _config;
+  static set setAzureAudioConfig(AppConfig cg) => _config = cg;
+  static AppConfig get config => _config;
 
   static const double borderRadius = 27;
   static const double defaultPadding = 8;

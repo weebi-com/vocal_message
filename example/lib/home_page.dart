@@ -9,7 +9,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (Globals.azureConfig.rootPath.isEmpty) {
+    if (Globals.config.rootPath.isEmpty) {
       return const Center(child: Text('Globals.azureRootPath is empty'));
     }
     if (Globals.documentPath.isEmpty) {

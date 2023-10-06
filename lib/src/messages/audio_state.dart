@@ -57,8 +57,7 @@ Future<AllAudioFiles> getLocalAudioFetchFilesAndSetStatus(
     }
   }
   if (isConnected) {
-    final allAudios =
-        await fetchFilesAndSetStatus(Globals.azureConfig.rootPath);
+    final allAudios = await fetchFilesAndSetStatus(Globals.config.rootPath);
     return allAudios;
   } else {
     return getLocalFilesAndStatusOnly();
@@ -87,7 +86,7 @@ Future<AllAudioFiles> fetchFilesAndSetStatus(String azurePath) async {
   final myFiles = <MyFileStatus>[];
   final theirFiles = <TheirFileStatus>[];
   final myRemoteFiles =
-      await fetchRemoteAudioFiles(Globals.azureConfig.myFilesPath, client);
+      await fetchRemoteAudioFiles(Globals.config.myFilesPath, client);
   final myLocalFiles = getOnlyMyLocalAudioFiles();
   for (final localFile in myLocalFiles) {
     if (myRemoteFiles.filesNameOnly.contains(localFile.nameOnly)) {
@@ -107,7 +106,7 @@ Future<AllAudioFiles> fetchFilesAndSetStatus(String azurePath) async {
   final theirLocalFiles = getOnlyTheirLocalAudioFiles();
 
   final theirRemoteFiles =
-      await fetchRemoteAudioFiles(Globals.azureConfig.theirFilesPath, client2);
+      await fetchRemoteAudioFiles(Globals.config.theirFilesPath, client2);
   debugPrint('theirRemoteFiles ${theirRemoteFiles.length}');
   for (final remoteFile in theirRemoteFiles) {
     if (theirLocalFiles.namesOnly.contains(remoteFile.fileName)) {

@@ -380,7 +380,7 @@ class _RecorderMobileViewState extends State<RecorderMobileView>
               .insertItem(AudioState.allAudioFiles.all.length - 1);
           final dd = await AzureBlobAbstract.uploadAudioWavToAzure(
               filePath,
-              Globals.azureConfig.myFilesPath + '/' + filePath.nameOnly,
+              Globals.config.myFilesPath + '/' + filePath.nameOnly,
               Globals.client);
           if (dd == true) {
             Globals.client.close();
@@ -519,7 +519,7 @@ class _RecorderMobileViewState extends State<RecorderMobileView>
               .insertItem(AudioState.allAudioFiles.all.length - 1);
           final dd = await AzureBlobAbstract.uploadAudioWavToAzure(
               filePath,
-              Globals.azureConfig.myFilesPath + '/' + filePath.nameOnly,
+              Globals.config.myFilesPath + '/' + filePath.nameOnly,
               Globals.client);
           if (dd == true) {
             Globals.client.close();

@@ -22,12 +22,12 @@ Lower the barrier for voice-based services.
 - azure permissions : to set a role with blob contributor
 - azure file formats : only upload .wav audio file
 - azureFolderFullPath = container + folderPath + direction, ex : 
-	- /audio-test/jimmy_jo/uploads // where app-user's vocal message will be saved
-	- /audio-test/jimmy_jo/downloads // where admin should save vocal message replies (.wav)
+	- /audio-test/jimmy_jo/sent_by_user // where app-user's vocal message will be saved
+	- /audio-test/jimmy_jo/loaded_by_admin // where admin should save vocal message replies (.wav)
 
 - it is only possible to reply to a user through azure web console 
   - you will only see a user folder if they have sent at least one audio
-  - drag and drop your audio in user folder and in the view set path : uploads
+  - drag and drop your audio in user folder and in the view set path : sent_by_user
   - user will need to update view to see the ready to download voice message
 
 - toCheck : if one knows the user folderName, is it possible to create it manually to init voice messaging ?
@@ -93,7 +93,7 @@ minSdkVersion 21
 <true/>
 <key>com.apple.security.network.client</key>
 <true/>
-<key>com.apple.security.files.downloads.read-write</key>
+<key>com.apple.security.files.loaded_by_admin.read-write</key>
 
 > info.plist
 NSMicrophoneUsageDescription
@@ -110,7 +110,7 @@ platform :osx, '10.15'
 <true/>
 <key>com.apple.security.network.client</key>
 <true/>
-<key>com.apple.security.files.downloads.read-write</key>
+<key>com.apple.security.files.loaded_by_admin.read-write</key>
 <true/>
 
 # Dependencies

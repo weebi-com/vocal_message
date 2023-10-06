@@ -1,22 +1,25 @@
-class AzureAudioConfig {
-  late String containerName;
-  late String userFolderName;
+class AppConfig {
+  late String azureContainerName;
+  late String azureUserFolderName;
+  late String androidAudioName;
+  static final AppConfig _inst = AppConfig._internal();
 
-  static final AzureAudioConfig _inst = AzureAudioConfig._internal();
+  AppConfig._internal();
 
-  AzureAudioConfig._internal();
-
-  factory AzureAudioConfig(
-      {required String containerName, required String userFolderName}) {
-    _inst.containerName = containerName;
-    _inst.userFolderName = userFolderName;
+  factory AppConfig(
+      {required String containerName,
+      required String userFolderName,
+      String androidAudioName = 'vocal_message'}) {
+    _inst.azureContainerName = containerName;
+    _inst.azureUserFolderName = userFolderName;
+    _inst.androidAudioName = androidAudioName;
     return _inst;
   }
 
-  String get rootPath => '/' + containerName + '/' + userFolderName;
+  String get rootPath => '/' + azureContainerName + '/' + azureUserFolderName;
   String get myFilesPath =>
-      '/' + containerName + '/' + userFolderName + '/uploads';
+      '/' + azureContainerName + '/' + azureUserFolderName + '/sent_by_user';
 
   String get theirFilesPath =>
-      '/' + containerName + '/' + userFolderName + '/downloads';
+      '/' + azureContainerName + '/' + azureUserFolderName + '/loaded_by_admin';
 }

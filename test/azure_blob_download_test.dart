@@ -26,7 +26,7 @@ void main() {
     AzureBlobAbstract.setConnectionString(azureConn);
 
     final audioContent = await AzureBlobAbstract.downloadAudioFromAzure(
-        '/audio-test/test@weebi.com_macos_MacBook de mac/downloads/Phoniks_Message to Earth.mp3',
+        '/audio-test/test@weebi.com_macos_MacBook de mac/loaded_by_admin/Phoniks_Message to Earth.mp3',
         client);
 
     final fileSaved = await File(

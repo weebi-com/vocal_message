@@ -111,7 +111,7 @@ class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
     Globals.client = http.Client();
 
     final uint8List = await AzureBlobAbstract.downloadAudioFromAzure(
-        Globals.azureConfig
+        Globals.config
                 .theirFilesPath + // only makes sense to download audio from someone else
             '/' +
             widget.fileSyncStatus.filePath,
@@ -132,7 +132,7 @@ class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
     });
     final isUploadOk = await AzureBlobAbstract.uploadAudioWavToAzure(
         widget.fileSyncStatus.filePath,
-        Globals.azureConfig.myFilesPath +
+        Globals.config.myFilesPath +
             '/' +
             widget.fileSyncStatus.filePath.nameOnly,
         Globals.client);
