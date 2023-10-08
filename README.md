@@ -93,7 +93,10 @@ minSdkVersion 21
 <true/>
 <key>com.apple.security.network.client</key>
 <true/>
-<key>com.apple.security.files.loaded_by_admin.read-write</key>
+<key>com.apple.security.files.user-selected.read-write</key>
+<true/>
+<key>com.apple.security.files.downloads.read-write</key>
+<true/>
 
 > info.plist
 NSMicrophoneUsageDescription
@@ -110,7 +113,9 @@ platform :osx, '10.15'
 <true/>
 <key>com.apple.security.network.client</key>
 <true/>
-<key>com.apple.security.files.loaded_by_admin.read-write</key>
+<key>com.apple.security.files.user-selected.read-write</key>
+<true/>
+<key>com.apple.security.files.downloads.read-write</key>
 <true/>
 
 # Dependencies

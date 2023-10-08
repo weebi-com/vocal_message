@@ -49,6 +49,7 @@ class _RecorderMobileViewState extends State<RecorderMobileView>
   StreamSubscription<RecordState>? _recordSub;
   RecordState _recordState = RecordState.stop;
   StreamSubscription<Amplitude>? _amplitudeSub;
+  // ignore: unused_field
   Amplitude? _amplitude;
 
   @override
@@ -175,11 +176,6 @@ class _RecorderMobileViewState extends State<RecorderMobileView>
     final stopPath = await _audioRecorder.stop();
     //debugPrint('stopPath $stopPath');
     return stopPath;
-
-    // TODO check if really needed, this comes from recorder lib
-    // if (path != null) {
-    //   // widget.onStop(path);
-    // }
 
     // Simple download code for web testing
     // final anchor = html.document.createElement('a') as html.AnchorElement

@@ -22,14 +22,6 @@ Future<List<AzureAudioFileParser>> fetchRemoteAudioFiles(
   return files;
 }
 
-List<String> getAllLocalAudioFiles() {
-  List<FileSystemEntity> files =
-      Directory(Globals.documentPath).listSync(recursive: true);
-  files.removeWhere((element) => !element.path.endsWith("wav"));
-  files = files.reversed.toList();
-  return files.map((e) => e.path).toList();
-}
-
 List<String> getOnlyMyLocalAudioFiles() {
   List<FileSystemEntity> files = Globals.myFilesDir.listSync(recursive: false);
   files.removeWhere((element) => !element.path.endsWith("wav"));

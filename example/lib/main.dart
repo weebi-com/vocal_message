@@ -19,7 +19,7 @@ void main() async {
   // set the container used in azure blob and the user folder
   Globals.setAzureAudioConfig = AppConfig(
       containerName: 'audio-test',
-      userFolderName: 'john_doe',
+      userFolderName: 'vocup_test_user',
       androidAudioName: 'Vocup_audio');
 
   runApp(const AppDocDirectory());

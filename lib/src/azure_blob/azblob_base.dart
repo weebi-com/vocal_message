@@ -154,7 +154,6 @@ class AzureStorage {
   Future<http.StreamedResponse> listBlobsRaw(
       String path, http.Client client) async {
     final stuff = _splitPathSegment(path);
-    // stuff == var (container, rest)
     var request = http.Request(
         'GET',
         uri(path: stuff.first ?? '', queryParameters: {
