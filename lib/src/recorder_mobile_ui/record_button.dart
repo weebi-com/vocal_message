@@ -134,7 +134,8 @@ class _RecorderMobileViewState extends State<RecorderMobileView>
         final devs = await _audioRecorder.listInputDevices();
         debugPrint(devs.toString());
 
-        const config = RecordConfig(encoder: encoder, numChannels: 1);
+        const config =
+            RecordConfig(encoder: encoder, numChannels: 1, sampleRate: 16000);
 
         // Record to file
         String path;
