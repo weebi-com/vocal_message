@@ -26,7 +26,7 @@ dependencies:
   xml: ^6.2.2
   connectivity_plus: ^4.0.2
   internet_connection_checker: ^1.0.0+1
-  intl: ^0.17.0 # only used for dates
+  intl: ^0.18.1 # only used for dates
 
 dev_dependencies:
   flutter_test:
