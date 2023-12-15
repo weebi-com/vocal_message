@@ -36,11 +36,11 @@ class RecorderFrame extends StatelessWidget {
             return Padding(
               padding: const EdgeInsets.all(22.0),
               child: (!kIsWeb && (Platform.isAndroid || Platform.isIOS))
-                  ? Row(
+                  ? const Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment:
                           MainAxisAlignment.end, // keep mic button on the right
-                      children: const [
+                      children: [
                         RecorderMobileView(),
                       ],
                     )

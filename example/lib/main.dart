@@ -25,10 +25,6 @@ void main() async {
   runApp(const AppDocDirectory());
 }
 
-Future<Directory> dootheboogie() async {
-  return await getApplicationDocumentsDirectory();
-}
-
 class AppDocDirectory extends StatelessWidget {
   const AppDocDirectory({super.key});
 

@@ -47,16 +47,15 @@ class _AudioRecorderViewState extends State<AudioRecorderView> {
         const encoder = AudioEncoder.wav;
 
         // We don't do anything with this but printing
-        final isSupported = await _audioRecorder.isEncoderSupported(
-          encoder,
-        );
+        final isSupported = await _audioRecorder.isEncoderSupported(encoder);
 
         debugPrint('${encoder.name} supported: $isSupported');
 
         final devs = await _audioRecorder.listInputDevices();
         debugPrint(devs.toString());
 
-        const config = RecordConfig(encoder: encoder, numChannels: 1, sampleRate: 16000);
+        const config =
+            RecordConfig(encoder: encoder, numChannels: 1, sampleRate: 16000);
 
         // Record to file
         String path;
