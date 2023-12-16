@@ -4,9 +4,9 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:vocal_message/src/b_home_view.dart';
 
-class PermissionView extends StatelessWidget {
+class VocalMainView extends StatelessWidget {
   final String title;
-  const PermissionView(this.title, {Key? key}) : super(key: key);
+  const VocalMainView(this.title, {Key? key}) : super(key: key);
 
   Future<bool> checkPermission() async {
     const Permission permissionMic = Permission.microphone;
