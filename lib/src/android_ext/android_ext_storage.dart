@@ -22,7 +22,7 @@ class AndroidExtStorageSingleton {
 Future<bool> canUseAndroidExtStorage() async {
   final ext = await _getMyExtStoragePathAndroid();
   Globals.setAndroidConfig = AndroidExtStorageSingleton(path: ext);
-  return ext.isEmpty;
+  return ext.isNotEmpty;
 }
 
 // using globals here is not clean, but it enables dev to set their own folder name
