@@ -4,10 +4,10 @@ import 'dart:developer' as developer;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/services.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:vocal_message/logic.dart';
-
 import 'package:vocal_message/src/c_record_frame_permission.dart';
 import 'package:vocal_message/src/messages/audio_list.dart';
+import 'package:vocal_message/src/messages/audio_state.dart';
+import 'package:vocal_message/src/globals.dart';
 import 'package:flutter/material.dart';
 
 class VocalMessagesAndRecorderView extends StatefulWidget {
@@ -33,8 +33,8 @@ class _VocalMessagesAndRecorderViewState
   @override
   void initState() {
     super.initState();
-
     initConnectivity();
+
     _connectivitySubscription = _connectivity.onConnectivityChanged
         .listen((ConnectivityResult result) async {
       final temp = await isInternetAvailable(result);
@@ -103,13 +103,14 @@ class _VocalMessagesAndRecorderViewState
         ],
       ),
       body: widget.arePermissionsGiven == false
-          ? const Center(child: Text('Permissions insuffisantes'))
+          ? const Center(child: Text('Permissions not granted'))
           : Padding(
               padding: const EdgeInsets.all(Globals.defaultPadding),
               child: Column(
                 children: [
                   Expanded(
                     child: AudioList(
+                      isDeviceConnected,
                       () async => getLocalAudioFetchFilesAndSetStatus(
                           isDeviceConnected),
                     ),

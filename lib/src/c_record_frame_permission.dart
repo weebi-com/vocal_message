@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 
 import 'recorder_desktop_ui/desktop_frame.dart';
 
+// AudioRecorder().hasPermission(); // below seems redundant with a_permission
+// but keep it here yet
 class RecorderFrame extends StatelessWidget {
   const RecorderFrame({Key? key}) : super(key: key);
 
