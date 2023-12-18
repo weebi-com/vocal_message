@@ -6,10 +6,9 @@ import 'package:flutter/material.dart';
 typedef FutureGenerator = Future<AllAudioFiles> Function();
 
 class AudioList extends StatelessWidget {
-  final bool isConnected;
   final FutureGenerator generator;
   // final Function onRerun;
-  const AudioList(this.isConnected, this.generator, {Key? key})
+  const AudioList(this.generator, {Key? key})
       : super(key: key);
 
   @override

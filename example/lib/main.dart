@@ -20,7 +20,7 @@ void main() async {
   Globals.setAzureAudioConfig = AppConfig(
       containerName: 'audio-test',
       userFolderName: 'vocup_test_user',
-      androidAudioName: 'Vocup_audio');
+      folderName: 'vocup_audio');
 
   runApp(const AppDocDirectory());
 }
