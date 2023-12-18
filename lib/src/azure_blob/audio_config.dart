@@ -1,7 +1,7 @@
 class AppConfig {
   late String azureContainerName;
   late String azureUserFolderName;
-  late String folderName;
+  late String androidAudioName;
   static final AppConfig _inst = AppConfig._internal();
 
   AppConfig._internal();
@@ -9,10 +9,10 @@ class AppConfig {
   factory AppConfig(
       {required String containerName,
       required String userFolderName,
-      String folderName = 'vocal_message'}) {
+      String androidAudioName = 'vocal_message'}) {
     _inst.azureContainerName = containerName;
     _inst.azureUserFolderName = userFolderName;
-    _inst.folderName = folderName;
+    _inst.androidAudioName = androidAudioName;
     return _inst;
   }
 

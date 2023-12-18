@@ -481,10 +481,10 @@ packages:
     dependency: transitive
     description:
       name: record
-      sha256: be9b710f42edf94f939dda1a1688e82a68dcd391be0a836c01e639a249f133d3
+      sha256: "92340c307e5baa343c5d0b32b131cad71eab72fc69c57530a000a619e60271ef"
       url: "https://pub.dev"
     source: hosted
-    version: "5.0.1"
+    version: "5.0.2"
   record_android:
     dependency: transitive
     description:
@@ -529,10 +529,10 @@ packages:
     dependency: transitive
     description:
       name: record_windows
-      sha256: "642860baf603db8f0e32cfe04ab517495f002abad539ad015812ebe43ba2ef83"
+      sha256: "39998b3ea7d8d28b04159d82220e6e5e32a7c357c6fb2794f5736beea272f6c3"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.1"
+    version: "1.0.2"
   rxdart:
     dependency: transitive
     description:
