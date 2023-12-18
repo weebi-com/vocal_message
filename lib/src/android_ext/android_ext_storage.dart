@@ -66,6 +66,7 @@ Future<String> _getMyExtStoragePathAndroid() async {
 }
 
 Future<bool> canReadStorage() async {
+  Platform.operatingSystemVersion;
   const Permission _permissionAndroid13 = Permission.manageExternalStorage;
   final statusAndroid13 = await _permissionAndroid13.status;
   if (statusAndroid13 == PermissionStatus.granted) {

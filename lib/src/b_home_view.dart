@@ -12,8 +12,8 @@ import 'package:flutter/material.dart';
 
 class VocalMessagesAndRecorderView extends StatefulWidget {
   final String title;
-  final bool arePermissionsGiven;
-  const VocalMessagesAndRecorderView(this.title, this.arePermissionsGiven,
+  final bool isAndroidPermissionsGiven;
+  const VocalMessagesAndRecorderView(this.title, this.isAndroidPermissionsGiven,
       {Key? key})
       : super(key: key);
 
@@ -102,7 +102,7 @@ class _VocalMessagesAndRecorderViewState
           )
         ],
       ),
-      body: widget.arePermissionsGiven == false
+      body: widget.isAndroidPermissionsGiven == false
           ? const Center(child: Text('Permissions not granted'))
           : Padding(
               padding: const EdgeInsets.all(Globals.defaultPadding),

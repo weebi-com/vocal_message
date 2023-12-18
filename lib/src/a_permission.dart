@@ -1,7 +1,6 @@
 // ignore: file_names
 import 'dart:async';
 import 'dart:io';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:vocal_message/src/b_home_view.dart';
 import 'package:vocal_message/src/android_ext/android_ext_storage.dart';
@@ -10,19 +9,10 @@ class VocalMainView extends StatelessWidget {
   final String title;
   const VocalMainView(this.title, {Key? key}) : super(key: key);
 
-  Future<bool> checkPermission() async {
+  Future<bool> checkAndroidStoragePermission() async {
     if (Platform.isAndroid) {
       final isAndroidExtStorageGiven = await canUseAndroidExtStorage();
-      if (isAndroidExtStorageGiven == false) {
-        return false;
-      }
-    }
-
-    const Permission permissionMic = Permission.microphone;
-    final status = await permissionMic.status;
-    if (status != PermissionStatus.granted) {
-      final newStatus = await permissionMic.request();
-      return newStatus == PermissionStatus.granted;
+      return isAndroidExtStorageGiven;
     } else {
       return true;
     }
@@ -31,7 +21,7 @@ class VocalMainView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<bool>(
-        future: checkPermission(),
+        future: checkAndroidStoragePermission(),
         builder: (_, snap) {
           if (snap.connectionState == ConnectionState.waiting) {
             return SizedBox(
