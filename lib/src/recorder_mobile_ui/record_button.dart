@@ -284,8 +284,8 @@ class _RecorderMobileViewState extends State<RecorderMobileView>
             const SizedBox(height: 8),
             FlowShader(
               direction: Axis.vertical,
-              child: Column(
-                children: const [
+              child: const Column(
+                children: [
                   Icon(Icons.keyboard_arrow_up),
                   Icon(Icons.keyboard_arrow_up),
                   Icon(Icons.keyboard_arrow_up),

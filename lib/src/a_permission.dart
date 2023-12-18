@@ -3,7 +3,6 @@ import 'dart:async';
 import 'dart:io';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/material.dart';
-import 'package:record/record.dart';
 import 'package:vocal_message/src/b_home_view.dart';
 import 'package:vocal_message/src/android_ext/android_ext_storage.dart';
 

@@ -219,9 +219,9 @@ class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
                   });
                   Globals.client.close();
                 },
-                child: Stack(
+                child: const Stack(
                   alignment: Alignment.center,
-                  children: const [
+                  children: [
                     Icon(Icons.cancel),
                     CircularProgressIndicator(),
                   ],
@@ -347,9 +347,9 @@ class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
                   Globals.client.close();
                   return;
                 },
-                child: Stack(
+                child: const Stack(
                   alignment: Alignment.center,
-                  children: const [
+                  children: [
                     Icon(Icons.cancel),
                     CircularProgressIndicator(),
                   ],
