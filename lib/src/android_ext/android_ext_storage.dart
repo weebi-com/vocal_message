@@ -66,16 +66,27 @@ Future<String> _getMyExtStoragePathAndroid() async {
 }
 
 Future<bool> canReadStorage() async {
-  const Permission _permission = Permission.storage;
-  final status = await _permission.status;
-  if (status == PermissionStatus.granted) {
+  const Permission _permissionAndroid13 = Permission.manageExternalStorage;
+  final statusAndroid13 = await _permissionAndroid13.status;
+  if (statusAndroid13 == PermissionStatus.granted) {
     return true;
   } else {
-    final future = await _permission.request();
+    final future = await _permissionAndroid13.request();
     if (future == PermissionStatus.granted) {
       return true;
     } else {
-      return false;
+      const Permission _permission = Permission.storage;
+      final status = await _permission.status;
+      if (status == PermissionStatus.granted) {
+        return true;
+      } else {
+        final future = await _permission.request();
+        if (future == PermissionStatus.granted) {
+          return true;
+        } else {
+          return false;
+        }
+      }
     }
   }
 }

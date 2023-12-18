@@ -16,21 +16,24 @@ Lower the barrier for voice-based services.
 - outside of scope : chat_box / chatting
 
 # set-up & documentation 
+## set-up azure
 - create azure blob
 - create container in azure blob
-- create key with add, read, list permission
+- create azure blob key with add, read, list permission
 - azure permissions : to set a role with blob contributor
 - azure file formats : only upload .wav audio file
 - azureFolderFullPath = container + folderPath + direction, ex : 
 	- /audio-test/jimmy_jo/sent_by_user // where app-user's vocal message will be saved
 	- /audio-test/jimmy_jo/loaded_by_admin // where admin should save vocal message replies (.wav)
 
+## set-up in app
+- on android google play will require that you justify why ext. storage is needed
+
+# caveat
 - it is only possible to reply to a user through azure web console 
   - you will only see a user folder if they have sent at least one audio
   - drag and drop your audio in user folder and in the view set path : sent_by_user
   - user will need to update view to see the ready to download voice message
-
-- toCheck : if one knows the user folderName, is it possible to create it manually to init voice messaging ?
 
 # backlog
 ## support needed
