@@ -4,6 +4,7 @@ import 'dart:developer' as developer;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/services.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:media_store_plus/media_store_plus.dart';
 import 'package:vocal_message/src/c_record_frame_permission.dart';
 import 'package:vocal_message/src/messages/audio_list.dart';
 import 'package:vocal_message/src/messages/audio_state.dart';
@@ -33,6 +34,9 @@ class _VocalMessagesAndRecorderViewState
   @override
   void initState() {
     super.initState();
+    // You have set this otherwise it throws AppFolderNotSetException
+    MediaStore.appFolder = "MediaStorePlugin";
+
     initConnectivity();
 
     _connectivitySubscription = _connectivity.onConnectivityChanged

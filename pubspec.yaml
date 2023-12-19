@@ -10,11 +10,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  external_path: ^1.0.3
+  #external_path: ^1.0.3
+  media_store_plus: ^0.0.7
+  permission_handler: ^10.0.0 #^8.1.6
+  
   just_audio: ^0.9.31  #0.9.11
   audioplayers: ^4.1.0 #^5.1.0 
   font_awesome_flutter: ^10.1.0
-  permission_handler: ^10.0.0 #^8.1.6
   record: ^5.0.1
 #    git: 
 #      url: https://github.com/flutter-painter/record

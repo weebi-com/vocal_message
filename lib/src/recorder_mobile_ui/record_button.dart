@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:media_store_plus/media_store_plus.dart';
 import 'package:vocal_message/src/azure_blob/azblob_abstract.dart';
 import 'package:vocal_message/src/file_status.dart';
 import 'package:path/path.dart' as p;
@@ -66,9 +67,7 @@ class _RecorderMobileViewState extends State<RecorderMobileView>
         curve: const Interval(0.0, 0.6, curve: Curves.elasticInOut),
       ),
     );
-    controller.addListener(() {
-      setState(() {});
-    });
+    controller.addListener(() => setState(() {}));
 
     // coming from recorder
     _audioRecorder = AudioRecorder();
@@ -123,7 +122,9 @@ class _RecorderMobileViewState extends State<RecorderMobileView>
   /// FROM RECORDER LIB
   Future<void> _start() async {
     try {
-      if (await _audioRecorder.hasPermission()) {
+      // no longer necessary, already checked before
+      // if (await _audioRecorder.hasPermission())
+      {
         const encoder = AudioEncoder.wav;
 
         // We don't do anything with this but printing
@@ -146,24 +147,7 @@ class _RecorderMobileViewState extends State<RecorderMobileView>
               'audio_${DateTime.now().millisecondsSinceEpoch}.wav');
         }
         await _audioRecorder.start(config, path: path);
-
-        // Record to stream
-        // final file = File(path);
-        // final stream = await _audioRecorder.startStream(config);
-        // stream.listen(
-        //   (data) {
-        //     // ignore: avoid_print
-        //     print(
-        //       _audioRecorder.convertBytesToInt16(Uint8List.fromList(data)),
-        //     );
-        //     file.writeAsBytesSync(data, mode: FileMode.append);
-        //   },
-        //   // ignore: avoid_print
-        //   onDone: () => print('End of stream'),
-        // );
-
         _recordDuration = 0;
-
         _startTimer();
       }
     } catch (e) {
@@ -173,24 +157,28 @@ class _RecorderMobileViewState extends State<RecorderMobileView>
     }
   }
 
+  Future<void> androidSave(String stopPath) async {
+    final extPath = File(Globals.androidSupportDirPath +
+        "/" +
+        'my' +
+        "/" +
+        'audio_${DateTime.now().millisecondsSinceEpoch}.wav');
+
+    // delete path when saved
+    final bool status = await mediaStorePlugin.saveFile(
+      tempFilePath: extPath.path,
+      dirType: DirType.audio,
+      dirName: DirType.audio.defaults,
+    );
+    if (status) {
+      await File(stopPath).delete();
+    }
+  }
+
   Future<String?> _stop() async {
     final stopPath = await _audioRecorder.stop();
-    //debugPrint('stopPath $stopPath');
+    debugPrint('stopPath $stopPath');
     return stopPath;
-
-    // Simple download code for web testing
-    // final anchor = html.document.createElement('a') as html.AnchorElement
-    //   ..href = path
-    //   ..style.display = 'none'
-    //   ..download = 'audio.wav';
-    // html.document.body!.children.add(anchor);
-
-    // // download
-    // anchor.click();
-
-    // // cleanup
-    // html.document.body!.children.remove(anchor);
-    // html.Url.revokeObjectUrl(path!);
   }
 
   //Future<void> _pause() => _audioRecorder.pause();
@@ -497,9 +485,7 @@ class _RecorderMobileViewState extends State<RecorderMobileView>
           }
           debugPrint("Locked recording");
           debugPrint(details.localPosition.dy.toString());
-          setState(() {
-            isLocked = true;
-          });
+          setState(() => isLocked = true);
         } else {
           controller.reverse();
           if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
@@ -509,6 +495,7 @@ class _RecorderMobileViewState extends State<RecorderMobileView>
           if (filePath == null) {
             return;
           }
+          androidSave(filePath);
           Globals.client = http.Client();
           AudioState.allAudioFiles.myFiles
               .add(MyFileStatus(SyncStatus.localSyncing, filePath));

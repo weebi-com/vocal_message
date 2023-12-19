@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:vocal_message/src/android_ext/android_ext_storage.dart';
 import 'package:vocal_message/src/azure_blob/audio_file_parser.dart';
 import 'package:vocal_message/src/azure_blob/azblob_abstract.dart';
 import 'package:vocal_message/src/globals.dart';
@@ -39,15 +38,15 @@ List<String> getOnlyTheirLocalAudioFiles() {
 
 Future<AllAudioFiles> getLocalAudioFetchFilesAndSetStatus(
     bool isConnected) async {
-  if (Platform.isAndroid) {
-    final areAvailable = areAndroidExtFoldersAvailable();
-    if (areAvailable == false) {
-      final isSetUp = setupAndroidExtFolders();
-      if (isSetUp == false) {
-        throw 'unable to setup Android Folders';
-      }
-    }
-  }
+  // if (Platform.isAndroid) {
+  //   final areAvailable = areAndroidExtFoldersAvailable();
+  //   if (areAvailable == false) {
+  //     final isSetUp = setupAndroidExtFolders();
+  //     if (isSetUp == false) {
+  //       throw 'unable to setup Android Folders';
+  //     }
+  //   }
+  // }
   if (isConnected) {
     final allAudios = await fetchFilesAndSetStatus(Globals.config.rootPath);
     return allAudios;
