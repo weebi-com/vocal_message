@@ -135,6 +135,7 @@ class _VocalMessagesAndRecorderViewState
               if (isSureToDelete) {
                 Directory(Globals.documentPath).deleteSync(recursive: true);
                 Directory(Globals.documentPath).createSync();
+                setState(() {});
               }
             },
           ),
