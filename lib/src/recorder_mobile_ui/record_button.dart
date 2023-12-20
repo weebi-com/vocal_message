@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:media_store_plus/media_store_plus.dart';
 import 'package:vocal_message/src/azure_blob/azblob_abstract.dart';
 import 'package:vocal_message/src/file_status.dart';
 import 'package:path/path.dart' as p;
@@ -154,24 +153,6 @@ class _RecorderMobileViewState extends State<RecorderMobileView>
       if (kDebugMode) {
         print(e);
       }
-    }
-  }
-
-  Future<void> androidSave(String stopPath) async {
-    final extPath = File(Globals.androidSupportDirPath +
-        "/" +
-        'my' +
-        "/" +
-        'audio_${DateTime.now().millisecondsSinceEpoch}.wav');
-
-    // delete path when saved
-    final bool status = await mediaStorePlugin.saveFile(
-      tempFilePath: extPath.path,
-      dirType: DirType.audio,
-      dirName: DirType.audio.defaults,
-    );
-    if (status) {
-      await File(stopPath).delete();
     }
   }
 
@@ -495,7 +476,6 @@ class _RecorderMobileViewState extends State<RecorderMobileView>
           if (filePath == null) {
             return;
           }
-          androidSave(filePath);
           Globals.client = http.Client();
           AudioState.allAudioFiles.myFiles
               .add(MyFileStatus(SyncStatus.localSyncing, filePath));

@@ -1,6 +1,6 @@
 name: vocal_message
 description: record vocals, upload them on azure blob and download replies
-version: 0.0.1+1
+version: 0.0.2+2
 repository: https://github.com/weebi-com/vocal_message
 
 environment:
@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   #external_path: ^1.0.3
-  media_store_plus: ^0.0.7
+  #media_store_plus: ^0.0.7 # not needed keep android
   permission_handler: ^10.0.0 #^8.1.6
   
   just_audio: ^0.9.31  #0.9.11

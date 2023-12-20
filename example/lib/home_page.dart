@@ -15,6 +15,6 @@ class HomePage extends StatelessWidget {
     if (Globals.documentPath.isEmpty) {
       return const Text('Globals.documentPath is empty');
     }
-    return const VocalMainView("Voc'up");
+    return const VocalMessagesAndRecorderView("Voc'up");
   }
 }

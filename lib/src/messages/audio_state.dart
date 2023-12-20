@@ -38,15 +38,6 @@ List<String> getOnlyTheirLocalAudioFiles() {
 
 Future<AllAudioFiles> getLocalAudioFetchFilesAndSetStatus(
     bool isConnected) async {
-  // if (Platform.isAndroid) {
-  //   final areAvailable = areAndroidExtFoldersAvailable();
-  //   if (areAvailable == false) {
-  //     final isSetUp = setupAndroidExtFolders();
-  //     if (isSetUp == false) {
-  //       throw 'unable to setup Android Folders';
-  //     }
-  //   }
-  // }
   if (isConnected) {
     final allAudios = await fetchFilesAndSetStatus(Globals.config.rootPath);
     return allAudios;

@@ -1,11 +1,11 @@
 // ignore: file_names
 import 'dart:async';
 import 'dart:developer' as developer;
+import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/services.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:media_store_plus/media_store_plus.dart';
-import 'package:vocal_message/src/c_record_frame_permission.dart';
+import 'package:vocal_message/src/b_record_frame_permission.dart';
 import 'package:vocal_message/src/messages/audio_list.dart';
 import 'package:vocal_message/src/messages/audio_state.dart';
 import 'package:vocal_message/src/globals.dart';
@@ -13,10 +13,7 @@ import 'package:flutter/material.dart';
 
 class VocalMessagesAndRecorderView extends StatefulWidget {
   final String title;
-  final bool isAndroidPermissionsGiven;
-  const VocalMessagesAndRecorderView(this.title, this.isAndroidPermissionsGiven,
-      {Key? key})
-      : super(key: key);
+  const VocalMessagesAndRecorderView(this.title, {Key? key}) : super(key: key);
 
   @override
   State<VocalMessagesAndRecorderView> createState() =>
@@ -35,7 +32,6 @@ class _VocalMessagesAndRecorderViewState
   void initState() {
     super.initState();
     // You have set this otherwise it throws AppFolderNotSetException
-    MediaStore.appFolder = "MediaStorePlugin";
 
     initConnectivity();
 
@@ -82,12 +78,65 @@ class _VocalMessagesAndRecorderViewState
     }
   }
 
+  Future<bool> areYouSure(String title, String message, BuildContext context,
+      {required bool? isDismissible}) async {
+    return await showDialog(
+      context: context,
+      barrierDismissible: isDismissible ?? true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  child: const Text(
+                    'Annuler',
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                ),
+                TextButton(
+                  child: const Text('OK', overflow: TextOverflow.ellipsis),
+                  style: ButtonStyle(
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.blue),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.delete_forever),
+            onPressed: () async {
+              final isSureToDelete = await areYouSure(
+                  'Attention',
+                  'Cette opération va effacer tous les enregistrements.',
+                  context,
+                  isDismissible: false);
+              if (isSureToDelete) {
+                Directory(Globals.documentPath).deleteSync();
+              }
+            },
+          ),
           IconButton(
             icon: isDeviceConnected
                 ? isSyncing
@@ -106,28 +155,26 @@ class _VocalMessagesAndRecorderViewState
           )
         ],
       ),
-      body: widget.isAndroidPermissionsGiven == false
-          ? const Center(child: Text('Permissions not granted'))
-          : Padding(
-              padding: const EdgeInsets.all(Globals.defaultPadding),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: AudioList(
-                      isDeviceConnected,
-                      () async => getLocalAudioFetchFilesAndSetStatus(
-                          isDeviceConnected),
-                    ),
-                  ),
-                  Container(
-                    color: Theme.of(context).primaryColor.withOpacity(0.8),
-                    height: 8,
-                  ),
-                  const SizedBox(height: 12),
-                  const RecorderFrame(),
-                ],
+      body: Padding(
+        padding: const EdgeInsets.all(Globals.defaultPadding),
+        child: Column(
+          children: [
+            Expanded(
+              child: AudioList(
+                isDeviceConnected,
+                () async =>
+                    getLocalAudioFetchFilesAndSetStatus(isDeviceConnected),
               ),
             ),
+            Container(
+              color: Theme.of(context).primaryColor.withOpacity(0.8),
+              height: 8,
+            ),
+            const SizedBox(height: 12),
+            const RecorderFrame(),
+          ],
+        ),
+      ),
     );
   }
 }

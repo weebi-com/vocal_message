@@ -2,10 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
-import 'package:media_store_plus/media_store_plus.dart';
 import 'package:vocal_message/src/azure_blob/audio_config.dart';
-
-final mediaStorePlugin = MediaStore(); // android annoying storage
 
 extension LocalPathDownloadedFile on String {
   String get localPathFull =>
@@ -17,7 +14,6 @@ abstract class Globals {
   static late http.Client client;
   static String locale = 'fr';
   static String documentPath = '';
-  static String androidSupportDirPath = '';
 
   static void setDocumentPath(Directory dir) {
     documentPath = dir.path;
