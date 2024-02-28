@@ -4,16 +4,12 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart' as intl;
 import 'package:vocal_message/logic.dart';
 import 'package:vocal_message/src/azure_blob/azblob_abstract.dart';
 
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:http/http.dart' as http;
-
-final dateTimeFormatter =
-    intl.DateFormat('dd/MM/yyyy HH:mm:ss', Globals.locale);
 
 class AudioBubble<F extends FileSyncStatus> extends StatelessWidget {
   final F fileSyncStatus;
@@ -148,6 +144,8 @@ class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final dateString =
+        '${widget.fileSyncStatus.dateLastModif.year}/${widget.fileSyncStatus.dateLastModif.month}/${widget.fileSyncStatus.dateLastModif.day} ${widget.fileSyncStatus.dateLastModif.hour}:${widget.fileSyncStatus.dateLastModif.minute}';
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -276,8 +274,7 @@ class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
                       ),
                     ),
                     Text(
-                      dateTimeFormatter
-                          .format(widget.fileSyncStatus.dateLastModif),
+                      dateString,
                       style: const TextStyle(
                         fontSize: 10,
                         color: Colors.grey,
@@ -314,8 +311,7 @@ class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
                                   ),
                                 ),
                               Text(
-                                dateTimeFormatter.format(
-                                    widget.fileSyncStatus.dateLastModif),
+                                dateString,
                                 style: const TextStyle(
                                   fontSize: 10,
                                   color: Colors.grey,

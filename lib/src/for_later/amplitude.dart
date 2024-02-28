@@ -80,7 +80,8 @@ class _AmplitudeWidgetState extends State<AmplitudeWidget>
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQueryData.fromWindow(WidgetsBinding.instance.window).size;
+    final view = View.of(context);
+    final size = MediaQueryData.fromView(view).size;
     final double noiseWidth = 28.5 * (size.width / 100);
     final ThemeData theme = Theme.of(context);
     final newTHeme = theme.copyWith(
@@ -148,7 +149,8 @@ class Noises extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQueryData.fromWindow(WidgetsBinding.instance.window).size;
+    final view = View.of(context);
+    final size = MediaQueryData.fromView(view).size;
     final double height =
         5.74 * (size.width / 100) * math.Random().nextDouble() +
             .26 * (size.width / 100);

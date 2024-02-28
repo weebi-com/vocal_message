@@ -1,4 +1,3 @@
-import 'package:intl/intl.dart';
 import 'package:xml/xml.dart';
 
 extension Foo on Iterable<AzureAudioFileParser> {
@@ -28,20 +27,21 @@ class AzureAudioFileParser {
     final blobsNode = results.findElements('Blobs').first;
     final blobs = blobsNode.findElements('Blob');
     for (final fileXml in blobs) {
-      final path = fileXml.findElements('Name').first.text;
+      final path = fileXml.findElements('Name').first.innerText;
       final properties = fileXml.findElements('Properties').first;
       // properties
       final tempDateString =
-          properties.findElements('Creation-Time').first.text;
-      final formatter = DateFormat('EEE, d MMM yyyy HH:mm:ss');
-      final creationTime = formatter.parse(tempDateString);
+          properties.findElements('Creation-Time').first.innerText;
+      // final formatter = DateFormat('EEE, d MMM yyyy HH:mm:ss');
+      final tempDateDate = DateTime.tryParse(tempDateString);
+
       final contentLength =
-          int.parse(properties.findElements('Content-Length').first.text);
-      final type = properties.findElements('Content-Type').first.text;
+          int.parse(properties.findElements('Content-Length').first.innerText);
+      final type = properties.findElements('Content-Type').first.innerText;
       if (path.isNotEmpty) {
         if (type.contains('audio')) {
           final fileAzure =
-              AzureAudioFileParser(path, creationTime, contentLength);
+              AzureAudioFileParser(path, tempDateDate, contentLength);
           filesAzure.add(fileAzure);
         }
       }
