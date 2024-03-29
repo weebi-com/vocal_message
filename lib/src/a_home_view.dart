@@ -133,7 +133,8 @@ class _VocalMessagesAndRecorderViewState
                   context,
                   isDismissible: false);
               if (isSureToDelete) {
-                Directory(Globals.documentPath).deleteSync(recursive: true);
+                Globals.theirFilesDir.deleteSync(recursive: false);
+                Globals.myFilesDir.deleteSync(recursive: false);
                 Directory(Globals.documentPath).createSync();
                 setState(() {});
               }
