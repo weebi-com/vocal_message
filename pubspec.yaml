@@ -1,6 +1,6 @@
 name: vocal_message
 description: record vocals, upload them on azure blob and download replies
-version: 0.0.3
+version: 0.0.4
 repository: https://github.com/weebi-com/vocal_message
 
 environment:
