@@ -50,20 +50,6 @@ abstract class AzureBlobAbstract {
     }
   }
 
-  static Future<bool> uploadJsonToAzure(
-      String text, String azureFolderFullPath, http.Client client) async {
-    final storage = AzureStorage.parse(_connectionString);
-    try {
-      await storage.putBlob(azureFolderFullPath, client,
-          body: text, contentType: 'application/json');
-      debugPrint('uploadJsonToAzure done');
-      return true;
-    } on AzureStorageException catch (ex) {
-      debugPrint('AzureStorageException ${ex.message}');
-      return false;
-    }
-  }
-
   static Future<bool> uploadAudioWavToAzure(
       String filePath, String azureFolderFullPath, http.Client client) async {
     try {
@@ -80,6 +66,20 @@ abstract class AzureBlobAbstract {
           false) {
         debugPrint(e.toString());
       }
+      return false;
+    }
+  }
+
+  static Future<bool> uploadJsonToAzure(
+      String text, String azureFolderFullPath, http.Client client) async {
+    final storage = AzureStorage.parse(_connectionString);
+    try {
+      await storage.putBlob(azureFolderFullPath, client,
+          body: text, contentType: 'application/json');
+      debugPrint('uploadJsonToAzure done');
+      return true;
+    } on AzureStorageException catch (ex) {
+      debugPrint('AzureStorageException ${ex.message}');
       return false;
     }
   }

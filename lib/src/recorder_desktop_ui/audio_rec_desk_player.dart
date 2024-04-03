@@ -108,28 +108,31 @@ class AudioRecPlayerState extends State<AudioRecPlayer> {
                   child: IconButton(
                     icon: const Icon(Icons.upload, color: Colors.white),
                     onPressed: () async {
-                      Globals.client = http.Client();
+                      VocalMessagesConfig.client = http.Client();
                       AudioState.allAudioFiles.myFiles.add(
                           MyFileStatus(SyncStatus.localSyncing, widget.source));
-                      if (Globals.audioListKey.currentState != null) {
-                        Globals.audioListKey.currentState!.insertItem(
-                            AudioState.allAudioFiles.all.length - 1);
+                      if (VocalMessagesConfig.audioListKey.currentState !=
+                          null) {
+                        VocalMessagesConfig.audioListKey.currentState!
+                            .insertItem(
+                                AudioState.allAudioFiles.all.length - 1);
                       }
                       final dd = await AzureBlobAbstract.uploadAudioWavToAzure(
                           widget.source,
-                          Globals.config.myFilesPath +
+                          VocalMessagesConfig.config.myFilesPath +
                               '/' +
                               widget.source.nameOnly,
-                          Globals.client);
+                          VocalMessagesConfig.client);
                       if (dd == true) {
-                        Globals.client.close();
+                        VocalMessagesConfig.client.close();
                         final index = AudioState.allAudioFiles.myFiles
                             .indexWhere((e) =>
                                 e.uploadStatus == SyncStatus.localSyncing &&
                                 e.filePath == widget.source);
                         AudioState.allAudioFiles.myFiles[index] =
                             MyFileStatus(SyncStatus.synced, widget.source);
-                        Globals.audioListKey.currentState!.setState(() {});
+                        VocalMessagesConfig.audioListKey.currentState!
+                            .setState(() {});
                       }
                       debugPrint(widget.source);
                       widget.onDoneOrDelete();

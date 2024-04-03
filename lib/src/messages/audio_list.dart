@@ -50,7 +50,7 @@ class AudioBubblesListWidget extends StatelessWidget {
     return AnimatedList(
       initialItemCount: AudioState.allAudioFiles.all.length,
       padding: const EdgeInsets.symmetric(vertical: 15),
-      key: Globals.audioListKey,
+      key: VocalMessagesConfig.audioListKey,
       itemBuilder: (context, index, animation) {
         return FadeTransition(
           opacity: animation,

@@ -9,10 +9,10 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (Globals.config.rootPath.isEmpty) {
+    if (VocalMessagesConfig.config.rootPath.isEmpty) {
       return const Center(child: Text('Globals.azureRootPath is empty'));
     }
-    if (Globals.documentPath.isEmpty) {
+    if (VocalMessagesConfig.documentPath.isEmpty) {
       return const Text('Globals.documentPath is empty');
     }
     return const VocalMessagesAndRecorderView("Voc'up");

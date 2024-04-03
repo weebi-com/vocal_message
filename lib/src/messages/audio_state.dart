@@ -22,7 +22,8 @@ Future<List<AzureAudioFileParser>> fetchRemoteAudioFiles(
 }
 
 List<String> getOnlyMyLocalAudioFiles() {
-  List<FileSystemEntity> files = Globals.myFilesDir.listSync(recursive: false);
+  List<FileSystemEntity> files =
+      VocalMessagesConfig.myFilesDir.listSync(recursive: false);
   files.removeWhere((element) => !element.path.endsWith("wav"));
   files = files.reversed.toList();
   return files.map((e) => e.path).toList();
@@ -30,7 +31,7 @@ List<String> getOnlyMyLocalAudioFiles() {
 
 List<String> getOnlyTheirLocalAudioFiles() {
   List<FileSystemEntity> files =
-      Globals.theirFilesDir.listSync(recursive: false);
+      VocalMessagesConfig.theirFilesDir.listSync(recursive: false);
   files.removeWhere((element) => !element.path.endsWith("wav"));
   files = files.reversed.toList();
   return files.map((e) => e.path).toList();
@@ -39,7 +40,8 @@ List<String> getOnlyTheirLocalAudioFiles() {
 Future<AllAudioFiles> getLocalAudioFetchFilesAndSetStatus(
     bool isConnected) async {
   if (isConnected) {
-    final allAudios = await fetchFilesAndSetStatus(Globals.config.rootPath);
+    final allAudios =
+        await fetchFilesAndSetStatus(VocalMessagesConfig.config.rootPath);
     return allAudios;
   } else {
     return getLocalFilesAndStatusOnly();
@@ -67,8 +69,8 @@ Future<AllAudioFiles> fetchFilesAndSetStatus(String azurePath) async {
   final client = http.Client();
   final myFiles = <MyFileStatus>[];
   final theirFiles = <TheirFileStatus>[];
-  final myRemoteFiles =
-      await fetchRemoteAudioFiles(Globals.config.myFilesPath, client);
+  final myRemoteFiles = await fetchRemoteAudioFiles(
+      VocalMessagesConfig.config.myFilesPath, client);
   final myLocalFiles = getOnlyMyLocalAudioFiles();
   for (final localFile in myLocalFiles) {
     if (myRemoteFiles.filesNameOnly.contains(localFile.nameOnly)) {
@@ -87,8 +89,8 @@ Future<AllAudioFiles> fetchFilesAndSetStatus(String azurePath) async {
 
   final theirLocalFiles = getOnlyTheirLocalAudioFiles();
 
-  final theirRemoteFiles =
-      await fetchRemoteAudioFiles(Globals.config.theirFilesPath, client2);
+  final theirRemoteFiles = await fetchRemoteAudioFiles(
+      VocalMessagesConfig.config.theirFilesPath, client2);
   debugPrint('theirRemoteFiles ${theirRemoteFiles.length}');
   for (final remoteFile in theirRemoteFiles) {
     if (theirLocalFiles.namesOnly.contains(remoteFile.fileName)) {

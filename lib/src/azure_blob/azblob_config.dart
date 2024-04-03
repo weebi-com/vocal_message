@@ -1,18 +1,16 @@
-class AppConfig {
+class AzureBlobConfig {
   late String azureContainerName;
   late String azureUserFolderName;
-  late String androidAudioName;
-  static final AppConfig _inst = AppConfig._internal();
+  static final AzureBlobConfig _inst = AzureBlobConfig._internal();
 
-  AppConfig._internal();
+  AzureBlobConfig._internal();
 
-  factory AppConfig(
+  factory AzureBlobConfig(
       {required String containerName,
       required String userFolderName,
-      String androidAudioName = 'vocal_message'}) {
+      String appName = 'vocal_message'}) {
     _inst.azureContainerName = containerName;
     _inst.azureUserFolderName = userFolderName;
-    _inst.androidAudioName = androidAudioName;
     return _inst;
   }
 

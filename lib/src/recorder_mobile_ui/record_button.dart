@@ -86,19 +86,20 @@ class _RecorderMobileViewState extends State<RecorderMobileView>
   void didChangeDependencies() {
     super.didChangeDependencies();
     lockTimerWidth = MediaQuery.of(context).size.width * 0.7;
-    cancelTimerWidth =
-        MediaQuery.of(context).size.width - (6.2 * Globals.defaultPadding);
+    cancelTimerWidth = MediaQuery.of(context).size.width -
+        (6.2 * VocalMessagesConfig.defaultPadding);
     timerAnimation = Tween<double>(
-            begin: (cancelTimerWidth) + Globals.defaultPadding, end: 0)
+            begin: (cancelTimerWidth) + VocalMessagesConfig.defaultPadding,
+            end: 0)
         .animate(
       CurvedAnimation(
         parent: controller,
         curve: const Interval(0.2, 1, curve: Curves.easeIn),
       ),
     );
-    lockerAnimation =
-        Tween<double>(begin: lockerHeight + Globals.defaultPadding, end: 0)
-            .animate(
+    lockerAnimation = Tween<double>(
+            begin: lockerHeight + VocalMessagesConfig.defaultPadding, end: 0)
+        .animate(
       CurvedAnimation(
         parent: controller,
         curve: const Interval(0.2, 1, curve: Curves.easeIn),
@@ -142,7 +143,7 @@ class _RecorderMobileViewState extends State<RecorderMobileView>
         if (kIsWeb) {
           path = '';
         } else {
-          path = p.join(Globals.myFilesDir.path,
+          path = p.join(VocalMessagesConfig.myFilesDir.path,
               'audio_${DateTime.now().millisecondsSinceEpoch}.wav');
         }
         await _audioRecorder.start(config, path: path);
@@ -242,7 +243,7 @@ class _RecorderMobileViewState extends State<RecorderMobileView>
         height: lockerHeight,
         width: size,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(Globals.borderRadius),
+          borderRadius: BorderRadius.circular(VocalMessagesConfig.borderRadius),
           color: Colors.green,
         ),
         padding: const EdgeInsets.symmetric(vertical: 15),
@@ -274,7 +275,7 @@ class _RecorderMobileViewState extends State<RecorderMobileView>
         height: size,
         width: cancelTimerWidth,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(Globals.borderRadius),
+          borderRadius: BorderRadius.circular(VocalMessagesConfig.borderRadius),
           color: Colors.red,
         ),
         child: Padding(
@@ -339,23 +340,23 @@ class _RecorderMobileViewState extends State<RecorderMobileView>
           if (filePath == null) {
             return;
           }
-          Globals.client = http.Client();
+          VocalMessagesConfig.client = http.Client();
           AudioState.allAudioFiles.myFiles
               .add(MyFileStatus(SyncStatus.localSyncing, filePath));
-          Globals.audioListKey.currentState!
+          VocalMessagesConfig.audioListKey.currentState!
               .insertItem(AudioState.allAudioFiles.all.length - 1);
           final dd = await AzureBlobAbstract.uploadAudioWavToAzure(
               filePath,
-              Globals.config.myFilesPath + '/' + filePath.nameOnly,
-              Globals.client);
+              VocalMessagesConfig.config.myFilesPath + '/' + filePath.nameOnly,
+              VocalMessagesConfig.client);
           if (dd == true) {
-            Globals.client.close();
+            VocalMessagesConfig.client.close();
             final index = AudioState.allAudioFiles.myFiles.indexWhere((e) =>
                 e.uploadStatus == SyncStatus.localSyncing &&
                 e.filePath == filePath);
             AudioState.allAudioFiles.myFiles[index] =
                 MyFileStatus(SyncStatus.synced, filePath);
-            Globals.audioListKey.currentState!.setState(() {});
+            VocalMessagesConfig.audioListKey.currentState!.setState(() {});
           }
           debugPrint(filePath);
         },
@@ -476,23 +477,23 @@ class _RecorderMobileViewState extends State<RecorderMobileView>
           if (filePath == null) {
             return;
           }
-          Globals.client = http.Client();
+          VocalMessagesConfig.client = http.Client();
           AudioState.allAudioFiles.myFiles
               .add(MyFileStatus(SyncStatus.localSyncing, filePath));
-          Globals.audioListKey.currentState!
+          VocalMessagesConfig.audioListKey.currentState!
               .insertItem(AudioState.allAudioFiles.all.length - 1);
           final dd = await AzureBlobAbstract.uploadAudioWavToAzure(
               filePath,
-              Globals.config.myFilesPath + '/' + filePath.nameOnly,
-              Globals.client);
+              VocalMessagesConfig.config.myFilesPath + '/' + filePath.nameOnly,
+              VocalMessagesConfig.client);
           if (dd == true) {
-            Globals.client.close();
+            VocalMessagesConfig.client.close();
             final index = AudioState.allAudioFiles.myFiles.indexWhere((e) =>
                 e.uploadStatus == SyncStatus.localSyncing &&
                 e.filePath == filePath);
             AudioState.allAudioFiles.myFiles[index] =
                 MyFileStatus(SyncStatus.synced, filePath);
-            Globals.audioListKey.currentState!.setState(() {});
+            VocalMessagesConfig.audioListKey.currentState!.setState(() {});
           }
           debugPrint(filePath);
         }

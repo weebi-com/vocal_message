@@ -62,7 +62,7 @@ class _AudioRecorderViewState extends State<AudioRecorderView> {
         if (kIsWeb) {
           path = '';
         } else {
-          path = p.join(Globals.myFilesDir.path,
+          path = p.join(VocalMessagesConfig.myFilesDir.path,
               'audio_${DateTime.now().millisecondsSinceEpoch}.wav');
         }
         await _audioRecorder.start(config, path: path);

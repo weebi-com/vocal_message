@@ -17,10 +17,8 @@ void main() async {
   AzureBlobAbstract.setConnectionString(azureConn);
 
   // set the container used in azure blob and the user folder
-  Globals.setAzureAudioConfig = AppConfig(
-      containerName: 'audio-test',
-      userFolderName: 'vocup_test_user',
-      androidAudioName: 'Vocup_audio');
+  VocalMessagesConfig.setAzureAudioConfig = AzureBlobConfig(
+      containerName: 'audio-test', userFolderName: 'vocup_test_user');
 
   runApp(const AppDocDirectory());
 }
@@ -49,7 +47,7 @@ class AppDocDirectory extends StatelessWidget {
             return const ColoredBox(
                 color: Colors.blue, child: Text('appDirectory null'));
           } else {
-            Globals.setDocumentPath(snap.data!);
+            VocalMessagesConfig.setDocumentPath(snap.data!);
             return const MyApp();
           }
         });
@@ -66,7 +64,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // set-up local here (default is fr)
-    Globals.locale = 'fr';
+    VocalMessagesConfig.locale = 'fr';
 
     return MaterialApp(
       home: const HomePage(),

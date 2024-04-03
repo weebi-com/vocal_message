@@ -28,7 +28,8 @@ class AudioBubble<F extends FileSyncStatus> extends StatelessWidget {
               height: 52,
               padding: const EdgeInsets.only(left: 10, right: 10),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(Globals.borderRadius - 10),
+                borderRadius: BorderRadius.circular(
+                    VocalMessagesConfig.borderRadius - 10),
                 color: fileSyncStatus is MyFileStatus
                     ? Colors.black
                     : Colors.blueGrey[900],
@@ -104,14 +105,14 @@ class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
       widget.fileSyncStatus = (widget.fileSyncStatus as TheirFileStatus)
           .copyWith(downloadStatus: SyncStatus.remoteSyncing);
     });
-    Globals.client = http.Client();
+    VocalMessagesConfig.client = http.Client();
 
     final uint8List = await AzureBlobAbstract.downloadAudioFromAzure(
-        Globals.config
+        VocalMessagesConfig.config
                 .theirFilesPath + // only makes sense to download audio from someone else
             '/' +
             widget.fileSyncStatus.filePath,
-        Globals.client);
+        VocalMessagesConfig.client);
 
     if (uint8List.isEmpty) {
       debugPrint('user interrupted download');
@@ -121,23 +122,23 @@ class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
   }
 
   Future<void> upload() async {
-    Globals.client = http.Client();
+    VocalMessagesConfig.client = http.Client();
     setState(() {
       widget.fileSyncStatus = (widget.fileSyncStatus as MyFileStatus)
           .copyWith(uploadStatus: SyncStatus.localSyncing);
     });
     final isUploadOk = await AzureBlobAbstract.uploadAudioWavToAzure(
         widget.fileSyncStatus.filePath,
-        Globals.config.myFilesPath +
+        VocalMessagesConfig.config.myFilesPath +
             '/' +
             widget.fileSyncStatus.filePath.nameOnly,
-        Globals.client);
+        VocalMessagesConfig.client);
     if (isUploadOk) {
       setState(() {
         widget.fileSyncStatus = (widget.fileSyncStatus as MyFileStatus)
             .copyWith(uploadStatus: SyncStatus.synced);
       });
-      Globals.client.close();
+      VocalMessagesConfig.client.close();
     }
     return;
   }
@@ -175,7 +176,7 @@ class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
                   try {
                     final temp2 = await File(temp).writeAsBytes(audioContent);
                     // final contentLength = await temp2.length();
-                    Globals.client.close();
+                    VocalMessagesConfig.client.close();
                     if (temp2.path.isNotEmpty) {
                       debugPrint('save file success in $temp');
                       try {
@@ -215,7 +216,7 @@ class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
                       downloadStatus: SyncStatus.remoteNotSynced,
                     );
                   });
-                  Globals.client.close();
+                  VocalMessagesConfig.client.close();
                 },
                 child: const Stack(
                   alignment: Alignment.center,
@@ -340,7 +341,7 @@ class _AudioBubbleWidgetState extends State<AudioBubbleWidget> {
                         (widget.fileSyncStatus as MyFileStatus)
                             .copyWith(uploadStatus: SyncStatus.localNotSynced);
                   });
-                  Globals.client.close();
+                  VocalMessagesConfig.client.close();
                   return;
                 },
                 child: const Stack(

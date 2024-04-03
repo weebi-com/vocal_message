@@ -133,9 +133,9 @@ class _VocalMessagesAndRecorderViewState
                   context,
                   isDismissible: false);
               if (isSureToDelete) {
-                Globals.theirFilesDir.deleteSync(recursive: false);
-                Globals.myFilesDir.deleteSync(recursive: false);
-                Directory(Globals.documentPath).createSync();
+                VocalMessagesConfig.theirFilesDir.deleteSync(recursive: false);
+                VocalMessagesConfig.myFilesDir.deleteSync(recursive: false);
+                Directory(VocalMessagesConfig.documentPath).createSync();
                 setState(() {});
               }
             },
@@ -159,7 +159,7 @@ class _VocalMessagesAndRecorderViewState
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(Globals.defaultPadding),
+        padding: const EdgeInsets.all(VocalMessagesConfig.defaultPadding),
         child: Column(
           children: [
             Expanded(
